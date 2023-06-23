@@ -17,5 +17,10 @@ def userpage(username):
     username = username.capitalize()
     return render_template("user.html", username=escape(username))
 
+
+@app.route("/narrator")
+def narratorMain():
+    return render_template("narrator.html")
+
 while True:
     app.run(host='192.168.178.58', port=80)
