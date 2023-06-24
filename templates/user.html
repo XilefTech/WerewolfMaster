@@ -4,3 +4,42 @@
 <form action="/logout">
     <input type="submit" value="Back to Title screen">
 </form>
+
+<div>
+
+    <h2>Current Players:</h2>
+
+    <ul>
+        
+    </ul>
+</div>
+
+<script>
+    // call api every 0.5 seconds to get the latest player list and update the page
+    setInterval(getPlayers, 500);
+
+    async function getPlayers() {
+        await fetch('/api/players')
+            .then((r) => r.json())
+            .then((data) => players = data)
+            .catch((e) => console.log('Something went wrong!'));
+
+
+        // players = JSON.parse(players);
+        console.log(players);
+        let list = document.querySelector('ul');
+        list.innerHTML = '';
+        if (players.length > 0) {
+            players.forEach(player => {
+                let li = document.createElement('li');
+                li.innerText = player.charAt(0).toUpperCase() + player.slice(1);
+                list.appendChild(li);
+            });
+        }
+        else {
+            let li = document.createElement('li');
+            li.innerText = 'No players yet';
+            list.appendChild(li);
+        }
+    }
+</script>
