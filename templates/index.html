@@ -3,7 +3,9 @@
 <h1>Welcome to Werewolf!</h1>
 
 <p>Wanna Join?</p>
-
+{% if error %}
+<p style="color: red"><strong>{{ error }}</strong></p>
+{% endif %}
 <form action="/" method="POST">
     <input type="text" name="name" placeholder="User123">
     <input type="submit" value="Join">
