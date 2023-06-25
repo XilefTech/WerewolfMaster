@@ -1,4 +1,5 @@
 from html import escape
+import random
 from flask import Flask, make_response, redirect, render_template, request
 from json import dumps
 
@@ -6,6 +7,10 @@ app = Flask(__name__)
 players = []
 playerTimeout = {}
 timeout = 10 # in seconds
+roles = ["wolf", "wolf", "witch", "seer", "slut", "cupid"] # cupid = amor
+assignedRoles = {}
+gamestate = 0
+gamestates = ["pre-round", "running"]
 
 
 @app.get("/")
@@ -38,6 +43,8 @@ def index_post():
 def userpage():
     username = request.cookies.get("username")
     if username:
+        if username not in players:
+            players.append(username)
         return render_template("user.html", username=escape(username.capitalize()))
     else:
         return redirect("/")
@@ -70,6 +77,24 @@ def api_path(subpath):
 
     if subpath == "players":
         return dumps(sorted(players))
+    if subpath == "gamestate":
+        return dumps(gamestates[gamestate])
+    
+    if subpath == "startgame":
+        if gamestate:
+            return dumps({"status": "failed", "data": "Error: Game already running!"})
+        
+        if len(players) > len(roles):
+            return dumps({"status": "failed", "data": "Error: Not enough roles for all players!"})
+        
+        random.shuffle(roles)
+        for index, player in enumerate(players):
+            assignedRoles[player] = roles[index]
+        
+        gamestate = 1
+
+        return dumps({"status": "success", "data": assignedRoles})
+            
     return subpath
 
 
