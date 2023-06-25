@@ -1,0 +1,13 @@
+* {
+    background-color: #111;
+    color: #fff;
+    font-family: Roboto;
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    src: url(./Roboto/Roboto-Regular.ttf) format('ttf');
+    unicode-range: U+1F00-1FFF;
+}
