@@ -77,9 +77,26 @@ def api_path(subpath):
 
     if subpath == "players":
         return dumps(sorted(players))
+    
+    
     if subpath == "gamestate":
         return dumps(gamestates[gamestate])
     
+
+    if subpath == "myrole":
+        name = request.cookies.get("username")
+        if not name:
+            return "Error: No username cookie found!"
+        
+        if not gamestate:
+            return "Error: Game not running!"
+
+        if name in assignedRoles:
+            return dumps(assignedRoles[name])
+        
+        return dumps("Looks like you're not in the game!")
+
+
     if subpath == "startgame":
         if gamestate:
             return dumps({"status": "failed", "data": "Error: Game already running!"})
