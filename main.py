@@ -7,7 +7,7 @@ app = Flask(__name__)
 players = []
 playerTimeout = {}
 timeout = 10 # in seconds
-roles = ["wolf", "wolf", "witch", "seer", "slut", "cupid"] # cupid = amor
+roles = ["wolf", "witch"] #["wolf", "wolf", "witch", "seer", "slut", "cupid"] # cupid = amor
 assignedRoles = {}
 gamestate = 0
 gamestates = ["pre-round", "running"]
