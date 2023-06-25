@@ -11,12 +11,47 @@
 
 </div>
 
+<div>
+    <h2>Roles</h2>
+    <p id="roleError" style="color:red"></p>
+    <ul id="playerRoles"></ul>
+
+</div>
+
+<button id="start-button">Start Game</button> 
+ 
+<script type="text/javascript"> 
+	document.getElementById("start-button").onclick = async function() { 
+		await fetch('/api/startgame')
+            .then((r) => r.json())
+            .then((data) => gameData = data)
+            .catch((e) => console.log('Something went wrong!'));
+
+        console.log(gameData);
+
+        if (gameData["status"] != "success") {
+            document.getElementById("roleError").innerHTML = gameData["data"];
+            return;
+        }
+
+        list = document.getElementById("playerRoles");
+        list.innerHTML = '';
+
+        for (const [name, role] of Object.entries(gameData["data"])) {
+            let li = document.createElement('li');
+            li.innerText = `${name.charAt(0).toUpperCase() + name.slice(1)}: ${role}`;
+            list.appendChild(li);
+        }
+	} 
+</script> 
+
+
+
+
+
 <script>
     // call api every 0.5 seconds to get the latest player list and update the page
     setInterval(getPlayers, 500);
-
-
-
 
     // maybe this can be put in a separate file? used in user.html as well
     async function getPlayers() {
@@ -26,7 +61,6 @@
             .catch((e) => console.log('Something went wrong!'));
 
 
-        // players = JSON.parse(players);
         console.log(players);
         let list = document.querySelector('ul');
         list.innerHTML = '';
@@ -46,3 +80,5 @@
         }
     }
 </script>
+
+

@@ -71,6 +71,7 @@ def api():
 
 @app.route("/api/<path:subpath>")
 def api_path(subpath):
+    global gamestate
     # if a playertimeout is needed, uncomment this, resets the timeout value with every api request
     # if request.cookies.get("username"):
     #     playerTimeout[request.cookies.get("username")] = timeout
@@ -78,7 +79,7 @@ def api_path(subpath):
     if subpath == "players":
         return dumps(sorted(players))
     
-    
+
     if subpath == "gamestate":
         return dumps(gamestates[gamestate])
     

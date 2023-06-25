@@ -14,6 +14,20 @@
     </ul>
 </div>
 
+<div>
+    <h2>Game State:</h2>
+    <p id="gamestate"></p>
+</div>
+
+<div>
+    <h2>My Role:</h2>
+    <h2 id="myrole"></h2>
+    <p id="roleDescription"></p>
+    <p id="roleLore"></p>
+    <img id="roleImage" src="">
+</div>
+
+
 <script>
     // call api every 0.5 seconds to get the latest player list and update the page
     setInterval(getPlayers, 500);
@@ -43,3 +57,34 @@
         }
     }
 </script>
+
+<script>
+    // call api every 0.5 seconds to get the game state and update the page
+    setInterval(getGameState, 500);
+
+    async function getGameState() {
+        await fetch('/api/gamestate')
+            .then((r) => r.json())
+            .then((data) => gamestate = data)
+            .catch((e) => console.log('Something went wrong!'));
+
+        console.log(gamestate);
+        document.getElementById("gamestate").innerHTML = gamestate;
+
+        if (gamestate == "running") {
+            await fetch('/api/myrole')
+                .then((r) => r.json())
+                .then((data) => role = data)
+                .catch((e) => console.log('Something went wrong!'));
+            
+            await fetch(`./static/roles/${role}/info.json`).then((r) => r.json()).then((data) => roleData = data)
+            console.log(roleData);
+            document.getElementById("myrole").innerHTML = roleData["de"]["roleName"];
+            document.getElementById("roleDescription").innerHTML = roleData["de"]["description"];
+            document.getElementById("roleLore").innerHTML = roleData["de"]["lore"];
+            document.getElementById("roleImage").src = `./static/roles/${role}/card.png`;
+
+        }
+    }
+</script>
+
