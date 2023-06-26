@@ -1,18 +1,24 @@
-<!DOCTYPE html>
-<head>
-    <title>Werewolf</title>
-    <link rel="stylesheet" href="static/style.css">
-</head>
+{% include "head.html.j2" %}
+<body>
+	<div class="container color-foreground">
+		<h1 class="item row heading">Welcome to Werewolf!</h1>
 
-<h1>Welcome to Werewolf!</h1>
+		<p class="item row">Wanna Join?</p>
 
-<p>Wanna Join?</p>
-{% if error %}
-<p style="color: red"><strong>{{ error }}</strong></p>
-{% endif %}
-<form action="/" method="POST">
-    <input type="text" name="name" placeholder="User123">
-    <input type="submit" value="Join">
-</form>
-
-<form action="/narrator" method="GET"> <input type="submit" value="Join as Narrator"></form>
+		<form class="item" action="/" method="POST">
+			{% if error %}
+			<p class="row" style="color: red"><strong>{{ error }}</strong></p>
+			{% endif %}
+			<div class="row">
+				<input type="text" name="name" placeholder="User123" />
+				<input type="submit" value="Join" />
+			</div>
+		</form>
+        
+		<div class="item row" style="height: 45px"></div>
+        
+		<form action="/narrator" method="GET">
+            <input class="item row" type="submit" value="Join as Narrator" />
+        </form>
+	</div>
+</body>

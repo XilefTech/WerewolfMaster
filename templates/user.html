@@ -1,94 +1,120 @@
-<!DOCTYPE html>
-<head>
-    <title>Werewolf</title>
-    <link rel="stylesheet" href="static/style.css">
-</head>
+{% include "head.html.j2" %}
+<body>
+	<div class="container color-foreground">
+		<div class="item row sticky">
+			<a href="/logout">
+				<div class="button" type="submit">
+					<svg class="icon center" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+						<path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
+					</svg>
+				</div>
+			</a>
+			<h1 class="item row heading">{{ username }}</h1>
+		</div>
+		<div class="item row" style="height: 45px"></div>
 
-<h1>Welcome to Werewolf, {{ username }}!</h1>
-<form action="/logout">
-    <input type="submit" value="Back to Title screen">
-</form>
+		<h2 class="item row" id="playerCount">Current Players: 0</h2>
 
-<div>
+		<div class="item">
+            <div class="row">
+                <h1 class="heading" id="myrole"></h1>
+                <i class="fa-solid fa-info infoIcon" id="infoIcon"></i>
+            </div>
+            <div class="row infoContainer" id="infoContainer">
+                <p class="info" id="roleDescription"></p>
+            </div>
+			<p class="row" id="roleLore"></p>
+		</div>
+		<img class="item row" id="roleImage" src="" />
 
-    <h2>Current Players:</h2>
+		<div class="item row bottom">
+			<h2 class="item debug">Game State:</h2>
+			<p class="item debug" id="gamestate"></p>
+		</div>
+	</div>
+</body>
 
-    <ul>
-        
-    </ul>
-</div>
+<footer>
+	<script>
+		document.getElementById("infoIcon").onclick = async function () {
+            console.log("infoBox");
+            if (document.getElementById('infoContainer').style.opacity == 1) {
+			    document.getElementById('roleDescription').style.fontSize = "0px";
+                document.getElementById('roleDescription').style.opacity = 0;
+                setTimeout(function() {
+                    document.getElementById('infoContainer').style.maxHeight = "0%";
+                    document.getElementById('infoContainer').style.maxWidth = "0%";
+                    document.getElementById('infoContainer').style.opacity = 0;
+                }, 100);
+            } else {
+                document.getElementById('infoContainer').style.maxHeight = "500px";
+                document.getElementById('infoContainer').style.maxWidth = "1000px";
+			    document.getElementById('infoContainer').style.opacity = 1;
+                setTimeout(function() {
+                    document.getElementById('roleDescription').style.fontSize = "20px";
+                    document.getElementById('roleDescription').style.opacity = 1;
+                }, 100);
+            }
+		}
 
-<div>
-    <h2>Game State:</h2>
-    <p id="gamestate"></p>
-</div>
+		// call api every 0.5 seconds to get the latest player list and update the page
+		setInterval(getPlayers, 500);
 
-<div>
-    <h2>My Role:</h2>
-    <h2 id="myrole"></h2>
-    <p id="roleDescription"></p>
-    <p id="roleLore"></p>
-    <img id="roleImage" src="">
-</div>
+		async function getPlayers() {
+			await fetch('/api/players')
+				.then((r) => r.json())
+				.then((data) => (players = data))
+				.catch((e) => console.log('Something went wrong!'));
 
+			// players = JSON.parse(players);
+			console.log(players);
 
-<script>
-    // call api every 0.5 seconds to get the latest player list and update the page
-    setInterval(getPlayers, 500);
+			document.getElementById('playerCount').innerHTML = `Current Players: ${players.length}`;
+			// let list = document.querySelector('ul');
+			// list.innerHTML = '';
+			// if (players.length > 0) {
+			// 	players.forEach((player) => {
+			// 		let li = document.createElement('li');
+			// 		li.innerText = player.charAt(0).toUpperCase() + player.slice(1);
+			// 		list.appendChild(li);
+			// 	});
+			// } else {
+			// 	let li = document.createElement('li');
+			// 	li.innerText = 'No players yet';
+			// 	list.appendChild(li);
+			// }
+		}
+	</script>
 
-    async function getPlayers() {
-        await fetch('/api/players')
-            .then((r) => r.json())
-            .then((data) => players = data)
-            .catch((e) => console.log('Something went wrong!'));
+	<script>
+		// call api every 0.5 seconds to get the game state and update the page
+		setInterval(getGameState, 500);
 
+		async function getGameState() {
+			await fetch('/api/gamestate')
+				.then((r) => r.json())
+				.then((data) => (gamestate = data))
+				.catch((e) => console.log('Something went wrong!'));
 
-        // players = JSON.parse(players);
-        console.log(players);
-        let list = document.querySelector('ul');
-        list.innerHTML = '';
-        if (players.length > 0) {
-            players.forEach(player => {
-                let li = document.createElement('li');
-                li.innerText = player.charAt(0).toUpperCase() + player.slice(1);
-                list.appendChild(li);
-            });
-        }
-        else {
-            let li = document.createElement('li');
-            li.innerText = 'No players yet';
-            list.appendChild(li);
-        }
-    }
-</script>
+			console.log(gamestate);
+			document.getElementById('gamestate').innerHTML = gamestate;
 
-<script>
-    // call api every 0.5 seconds to get the game state and update the page
-    setInterval(getGameState, 500);
+			if (gamestate == 'running') {
+				await fetch('/api/myrole')
+					.then((r) => r.json())
+					.then((data) => (role = data))
+					.catch((e) => console.log('Something went wrong!'));
 
-    async function getGameState() {
-        await fetch('/api/gamestate')
-            .then((r) => r.json())
-            .then((data) => gamestate = data)
-            .catch((e) => console.log('Something went wrong!'));
-
-        console.log(gamestate);
-        document.getElementById("gamestate").innerHTML = gamestate;
-
-        if (gamestate == "running") {
-            await fetch('/api/myrole')
-                .then((r) => r.json())
-                .then((data) => role = data)
-                .catch((e) => console.log('Something went wrong!'));
-            
-            await fetch(`./static/roles/${role}/info.json`).then((r) => r.json()).then((data) => roleData = data)
-            console.log(roleData);
-            document.getElementById("myrole").innerHTML = roleData["de"]["roleName"];
-            document.getElementById("roleDescription").innerHTML = roleData["de"]["description"];
-            document.getElementById("roleLore").innerHTML = roleData["de"]["lore"];
-            document.getElementById("roleImage").src = `./static/roles/${role}/card.png`;
-
-        }
-    }
-</script>
-
+				await fetch(`./static/roles/${role}/info.json`)
+					.then((r) => r.json())
+					.then((data) => (roleData = data));
+				console.log(roleData);
+				document.getElementById('myrole').innerHTML = roleData['de']['roleName'];
+				document.getElementById('roleDescription').innerHTML = roleData['de']['description'];
+				document.getElementById('roleLore').innerHTML = roleData['de']['lore'];
+				document.getElementById('roleImage').src = `./static/roles/${role}/card.png`;
+                document.getElementById('infoIcon').style.visibility = "visible";
+			}
+		}
+	</script>
+</footer>
