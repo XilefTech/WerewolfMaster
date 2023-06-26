@@ -1,7 +1,7 @@
 {
-    "de": {
-      "roleName": "Werwolf",
-      "lore": "Hier kommt n Absatz lore rein",
-      "description": "funktionale Beschreibung des Charakters, was tut er?"
-    }
-  }
+	"de": {
+		"roleName": "Werwolf",
+		"lore": "Das von der Zaubermeisterin erschaffene Rudel an Werwölfen verwandelt sich jede Nacht, um seiner Meisterin bei ihrer Jagd nach der Seherin zu helfen. Die Werwölfe sind verstoßene, arme und verkrüppelte Individuen der Gesellschaft, die durch die Blutlust des Gebräus auf die Jagd nach Menschen gehen. Jede Nacht suchen sie sich ein neues Opfer.",
+		"description": "Du suchst dir gemeinsam mit dem Rest des Rudels einen Spieler aus, der getötet werden soll."
+	}
+}

@@ -1,7 +1,7 @@
 {
-    "de": {
-      "roleName": "Hexe",
-      "lore": "Hier kommt n Absatz lore rein",
-      "description": "funktionale Beschreibung des Charakters, was tut er?"
-    }
-  }
+	"de": {
+		"roleName": "Hexe",
+		"lore": "Ein Schatten gleitet durch die Straßen von Düsterwald, als die Hexe von ihrem Spaziergang zurückkommt. Sie hat einige Kräuter gesammelt, die sie für ihre Tränke zu nutzen gedenkt. Auf dem Weg zu ihrem Turm kommt sie an einer aufgebrochenenTür vorbei, Tatzenspuren zeichnen sich vor dem Eingang der Hütte ab. Die Hexe wirft einen Blick hinein und sieht den toten Körper eines Dorfbewohners.",
+		"description": "Du erfährst, wer in dieser Nacht getötet werden soll und kannst dich entscheiden, diese Person zu heilen, nichts zu tun oder eine andere Person zu töten. Nachdem du geheilt oder getötet hast, kannst du diese Aktion nicht mehr im Spiel durchführen."
+	}
+}
