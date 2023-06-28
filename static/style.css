@@ -183,7 +183,7 @@ input[type='checkbox'] {
 }
 
 input[type='checkbox']:checked ~ label > img {
-	transform: scale(7) translate(-20%, 0%);
+	transform: scale(7) translate(-30%, 0%);
 	cursor: zoom-out;
 }
 
