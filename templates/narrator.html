@@ -35,16 +35,7 @@
 	</div>
 </body>
 
-<script type="text/javascript">
-	fetch('/api/gamestate')
-		.then((r) => r.json())
-		.then((data) => {
-			if (data == 'running') {
-				getGameData();
-			}
-		})
-		.catch((e) => console.log('Something went wrong!'));
-
+<script>
 	document.getElementById('end-button').onclick = function () {
 		if (confirm('Are you sure you want to end this round?') == true) {
 			fetch('/api/endgame').catch((e) => console.log('Something went wrong!'));
@@ -69,9 +60,17 @@
 			getGameData();
 		}
 	};
+</script>
 
-		getGameData();
-	};
+<script type="text/javascript">
+	fetch('/api/gamestate')
+		.then((r) => r.json())
+		.then((data) => {
+			if (data == 'running') {
+				getGameData();
+			}
+		})
+		.catch((e) => console.log('Something went wrong!'));
 
 	async function getGameData() {
 		// retrieve game data
