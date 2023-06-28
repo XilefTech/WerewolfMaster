@@ -29,11 +29,23 @@
 			<div class="row rolelist" id="playerRoles"></div>
 		</div>
 
+		<div class="item row" style="height: 20px"></div>
+		<p class="row" id="roleError" style="color: red"></p>
 		<button class="item row" id="start-button">Start Game</button>
+		<button class="item row" id="end-button">End Game</button>
 	</div>
 </body>
 
 <script type="text/javascript">
+	document.getElementById('end-button').onclick = function () {
+		if (confirm('Are you sure you want to end this round?') == true) {
+			fetch('/api/endgame').catch((e) => console.log('Something went wrong!'));
+
+			list = document.getElementById('playerRoles');
+			list.innerHTML = '<p><strong>Player</stong></p><p><strong>Role</stong></p><p><strong>Card</stong></p>';
+		}
+	};
+
 	document.getElementById('start-button').onclick = async function () {
 		await fetch('/api/startgame')
 			.then((r) => r.json())

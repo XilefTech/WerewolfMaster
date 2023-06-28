@@ -104,9 +104,15 @@ def api_path(subpath):
 		return dumps("Looks like you're not in the game!")
 
 
+	if subpath == "endgame":
+		gamestate = 0
+		assignedRoles.clear()
+		return dumps("success")
+
+
 	if subpath == "startgame":
-		# if gamestate:
-		# 	return dumps({"status": "failed", "data": "Error: Game already running!"})
+		if gamestate:
+			return dumps({"status": "failed", "data": "Error: Game already running!"})
 		
 		if len(players) > len(roles):
 			return dumps({"status": "failed", "data": "Error: Not enough roles for all players!"})
