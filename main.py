@@ -1,13 +1,15 @@
 from html import escape
+import os
 import random
 from flask import Flask, make_response, redirect, render_template, request
-from json import dumps
+from json import dumps, load
 
 app = Flask(__name__)
 players = []
 playerTimeout = {}
 timeout = 10 # in seconds
-roles = ["wolf", "witch"] #["wolf", "wolf", "witch", "seer", "slut", "cupid"] # cupid = amor
+roles = {'wolf': 2, 'witch': 1, 'seer': 1, 'slut': 1, 'cupid': 1, 'bearleader': 0, 'fox': 0, 'knight': 0, 'maiden': 0, 'thief': 0, 'wild_kiddo': 0, 'winking_girl': 0, 'wolf_primeval': 0, 'wolf_white': 0} # cupid = amor
+gameRoles = []
 assignedRoles = {}
 gamestate = 0
 gamestates = ["pre-round", "running"]
@@ -64,6 +66,10 @@ def logout():
 def narratorMain():
 	return render_template("narrator.html")
 
+@app.route("/narrator/settings")
+def narratorSettings():
+	return render_template("settings.html")
+
 
 @app.route("/api")
 def api():
@@ -99,22 +105,73 @@ def api_path(subpath):
 
 
 	if subpath == "startgame":
-		if gamestate:
-			return dumps({"status": "failed", "data": "Error: Game already running!"})
+		# if gamestate:
+		# 	return dumps({"status": "failed", "data": "Error: Game already running!"})
 		
 		if len(players) > len(roles):
 			return dumps({"status": "failed", "data": "Error: Not enough roles for all players!"})
 		
-		random.shuffle(roles)
+		for role, amount in roles.items():
+			for i in range(int(amount)):
+				gameRoles.append(role)
+		random.shuffle(gameRoles)
 		for index, player in enumerate(players):
-			assignedRoles[player] = roles[index]
+			assignedRoles[player] = gameRoles[index]
 		
 		gamestate = 1
 
 		return dumps({"status": "success", "data": assignedRoles})
-			
+	
+    
+	if subpath == "getAvailableRoles":
+		return dumps(getAvailableRoles())
+	
+	if subpath == "getRoleMappings":
+		roleMappings = {}
+
+		for role in getAvailableRoles():
+			if "static\\roles" not in os.getcwd(): os.chdir("static/roles/")
+			with open('%s/info.json' % role, encoding="utf-8") as f:
+				d = load(f)
+			roleMappings[role] = d["de"] ["roleName"]
+
+		return dumps(roleMappings)
+	
+	if subpath == "getRoleEntries":
+			return dumps(roles)
+
+	if "settings/" in subpath:
+		return dumps(settings(subpath, request))
+		
 	return subpath
 
+def settings(path, request):
+	role = request.args.get("role")
+		
+	if "setRoleEntry" in path:
+		if role in getAvailableRoles():
+			try:
+				roles[role] = request.args["value"]
+				print(roles)
+			except KeyError:
+				return "Error: No position specified!"
+			except IndexError:
+				return "Error: The specified position doesn't exist!"
+		else:
+			return "Error: No role specified!"
+	
+	return "success"
 
+
+def getAvailableRoles():
+	if "static\\roles" not in os.getcwd(): os.chdir("static/roles/")
+	return os.listdir()
+
+
+for role in getAvailableRoles():
+	if role not in roles:
+		roles[role] = 0
+
+print(roles)
 
 app.run(host='0.0.0.0', port=3000)
