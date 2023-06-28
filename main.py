@@ -4,15 +4,9 @@ import random
 from flask import Flask, make_response, redirect, render_template, request
 from json import dumps, load
 
+from gameData import players, roles, assignedRoles, gamestate, gamestates #, timeout, playerTimeout
+
 app = Flask(__name__)
-players = []
-playerTimeout = {}
-timeout = 10 # in seconds
-roles = {'wolf': 2, 'witch': 1, 'seer': 1, 'slut': 1, 'cupid': 1, 'bearleader': 0, 'fox': 0, 'knight': 0, 'maiden': 0, 'thief': 0, 'wild_kiddo': 0, 'winking_girl': 0, 'wolf_primeval': 0, 'wolf_white': 0} # cupid = amor
-gameRoles = []
-assignedRoles = {}
-gamestate = 0
-gamestates = ["pre-round", "running"]
 
 
 @app.get("/")
