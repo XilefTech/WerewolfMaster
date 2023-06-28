@@ -114,6 +114,12 @@
 				document.getElementById('roleLore').innerHTML = roleData['de']['lore'];
 				document.getElementById('roleImage').src = `./static/roles/${role}/card.png`;
                 document.getElementById('infoIcon').style.visibility = "visible";
+			} else {
+				document.getElementById('myrole').innerHTML = '';
+				document.getElementById('roleDescription').innerHTML = '';
+				document.getElementById('roleLore').innerHTML = '';
+				document.getElementById('roleImage').src = '';
+				document.getElementById('infoIcon').style.visibility = "hidden";
 			}
 		}
 	</script>
