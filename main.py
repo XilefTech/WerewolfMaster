@@ -111,6 +111,7 @@ def api_path(subpath):
 		if len(players) > len(roles):
 			return dumps({"status": "failed", "data": "Error: Not enough roles for all players!"})
 		
+		gameRoles = []
 		for role, amount in roles.items():
 			for i in range(int(amount)):
 				gameRoles.append(role)
@@ -174,4 +175,7 @@ for role in getAvailableRoles():
 
 print(roles)
 
+# import logging
+# log = logging.getLogger('werkzeug')
+# log.setLevel(logging.ERROR)
 app.run(host='0.0.0.0', port=3000)
