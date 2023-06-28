@@ -64,8 +64,11 @@
 
 		if (gameData['status'] != 'success') {
 			document.getElementById('roleError').innerHTML = gameData['data'];
-			return;
+			setTimeout(function() {document.getElementById('roleError').innerHTML = ''}, 3000);
+		} else {
+			getGameData();
 		}
+	};
 
 		getGameData();
 	};
