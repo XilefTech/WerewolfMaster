@@ -46,6 +46,11 @@ body {
 	margin: auto;
 }
 
+.center {
+	display: flex;
+	vertical-align: middle;
+}
+
 .row {
 	display: flex;
 	flex-direction: row;
@@ -66,11 +71,18 @@ body {
 	border: none;
 	color: white;
 	padding: 3px;
+	align-items: center;
+	justify-content: center;
 	text-align: center;
 	text-decoration: none;
-	display: inline-block;
+	display: flex;
 	cursor: pointer;
 	/* border-radius: 5px; */
+}
+
+.settings {
+    left: auto;
+    right: 0;
 }
 
 .color-foreground {
@@ -131,8 +143,32 @@ body {
     padding-top: 0;
     transition: font-size 0.5s, opacity 0.5s;
 }
-  
 
+.number {
+	width: 40px;
+	background-color: #333;
+	text-align: right;
+	color: #aaa;
+	border: none;
+}
+
+.cardlist {
+	display: grid;
+	grid-template-columns: auto auto;
+	grid-auto-rows: 35px;
+	gap: 5px;
+	column-gap: 10px;
+	columns: 2;
+	align-items: center;
+	justify-items: end;
+}
+  
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button {  
+
+   opacity: 1;
+
+}
 /* .button {
 	padding: 20px;
 	text-align: center;
