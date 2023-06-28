@@ -1,0 +1,105 @@
+{% include "head.html.j2" %}
+<body>
+	<div class="container color-foreground">
+		<div class="item row sticky">
+			<a href="/narrator">
+				<div class="button" type="submit">
+					<svg class="icon center" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+						<path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
+					</svg>
+				</div>
+			</a>
+			<h1 class="item row heading">Einstellungen</h1>
+		</div>
+		<div class="item row" style="height: 45px"></div>
+
+		<div class="item row">
+			<h1 id="cardCount">Total cards: 0</h1>
+		</div>
+		<div class="item cardlist" id="cardList"></div>
+	</div>
+</body>
+
+<footer>
+	<script>
+		let cards = [];
+		getRoleEntries().then((data) => {
+			cards = data;
+			console.log(cards);
+			totalCardCount = 0;
+
+			for (i in cards) {
+				totalCardCount += parseInt(cards[i]);
+
+				var card = document.createElement('div');
+				card.className = 'row';
+
+				var input = document.createElement('input');
+				input.type = 'number';
+				input.name = 'number';
+				input.id = `${i}_card`;
+				input.value = cards[i];
+				input.min = 0;
+				input.className = `item number ${i}`;
+				input.addEventListener('input', function (e) {
+					if (e.target.value == '') {
+						return;
+					}
+					console.log(e.target.value);
+					console.log(e.target.className.split(' ')[2]);
+					fetch(`/api/settings/setRoleEntry?role=${e.target.className.split(' ')[2]}&value=${e.target.value}`)
+						.then((r) => r.json())
+						.then((data) => {
+							console.log(data);
+						})
+						.catch((e) => console.log('Something went wrong!'));
+					updateCardCount();
+				});
+
+				var label = document.createElement('p');
+				label.id = `${i}_label`;
+				label.innerHTML = i;
+
+				card.appendChild(label);
+				card.appendChild(input);
+				document.getElementById('cardList').appendChild(label);
+				document.getElementById('cardList').appendChild(input);
+			}
+
+			fetch(`/api/getRoleMappings`)
+				.then((r) => r.json())
+				.then((data) => {
+					roleData = data;
+					for (i in roleData) {
+						console.log(roleData);
+						document.getElementById(`${i}_label`).innerHTML = roleData[i];
+					}
+				});
+
+			document.getElementById('cardCount').innerHTML = `Total cards: ${totalCardCount}`;
+		});
+
+		async function updateCardCount() {
+			getRoleEntries().then((data) => {
+				totalCardCount = 0;
+
+				for (i in data) {
+					totalCardCount += parseInt(data[i]);
+				}
+
+				document.getElementById('cardCount').innerHTML = `Total cards: ${totalCardCount}`;
+			});
+		}
+
+		async function getRoleEntries() {
+			await fetch('/api/getRoleEntries')
+				.then((r) => r.json())
+				.then((data) => {
+					roles = data;
+				})
+				.catch((e) => console.log('Something went wrong!'));
+
+			return roles;
+		}
+	</script>
+</footer>
