@@ -9,6 +9,7 @@ from sites.ui import ui
 from gameData import players, roles, assignedRoles, gamestate, gamestates #, timeout, playerTimeout
 
 app = Flask(__name__)
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.register_blueprint(api)
 app.register_blueprint(ui)
 
