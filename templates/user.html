@@ -13,49 +13,62 @@
 		</div>
 		<div class="item row" style="height: 45px"></div>
 
-		<h2 class="item row" id="playerCount">Current Players: 0</h2>
+		<h2 class="item row" id="playerCount">Spieler: 0</h2>
 
 		<div class="item">
-            <div class="row">
-                <h1 class="heading" id="myrole"></h1>
-                <i class="fa-solid fa-info infoIcon" id="infoIcon"></i>
-            </div>
-            <div class="row infoContainer" id="infoContainer">
-                <p class="info" id="roleDescription"></p>
-            </div>
+			<div class="row">
+				<h1 class="heading" id="myrole"></h1>
+				<i class="fa-solid fa-info infoIcon" id="infoIcon"></i>
+			</div>
+			<div class="row infoContainer" id="infoContainer">
+				<p class="info" id="roleDescription"></p>
+			</div>
 			<p class="row" id="roleLore"></p>
 		</div>
-		<img class="item row" id="roleImage" src="" />
+		<img class="item row" id="roleImage" src="" width="80%" height="auto" />
 
 		<div class="item row bottom">
 			<h2 class="item debug">Game State:</h2>
 			<p class="item debug" id="gamestate"></p>
 		</div>
 	</div>
+
+	<!-- Player death overlay -->
+	<div class="overlay" id="deathOverlay" style="display: none;">
+		<div class="overlay-content">
+			<center>
+			<h1 class="heading">Du bist gestorben!</h1>
+			<p class="">Zeit, auf die nächste Runde zu warten.</p>
+			</center>
+			<div class="row">
+				<i class="fa-solid fa-skull-crossbones" style="font-size: 100px;"></i>
+			</div>
+		</div>
+	</div>
 </body>
 
 <footer>
 	<script>
-		document.getElementById("infoIcon").onclick = async function () {
-            console.log("infoBox");
-            if (document.getElementById('infoContainer').style.opacity == 1) {
-			    document.getElementById('roleDescription').style.fontSize = "0px";
-                document.getElementById('roleDescription').style.opacity = 0;
-                setTimeout(function() {
-                    document.getElementById('infoContainer').style.maxHeight = "0%";
-                    document.getElementById('infoContainer').style.maxWidth = "0%";
-                    document.getElementById('infoContainer').style.opacity = 0;
-                }, 100);
-            } else {
-                document.getElementById('infoContainer').style.maxHeight = "500px";
-                document.getElementById('infoContainer').style.maxWidth = "1000px";
-			    document.getElementById('infoContainer').style.opacity = 1;
-                setTimeout(function() {
-                    document.getElementById('roleDescription').style.fontSize = "20px";
-                    document.getElementById('roleDescription').style.opacity = 1;
-                }, 100);
-            }
-		}
+		document.getElementById('infoIcon').onclick = async function () {
+			console.log('infoBox');
+			if (document.getElementById('infoContainer').style.opacity == 1) {
+				document.getElementById('roleDescription').style.fontSize = '0px';
+				document.getElementById('roleDescription').style.opacity = 0;
+				setTimeout(function () {
+					document.getElementById('infoContainer').style.maxHeight = '0%';
+					document.getElementById('infoContainer').style.maxWidth = '0%';
+					document.getElementById('infoContainer').style.opacity = 0;
+				}, 100);
+			} else {
+				document.getElementById('infoContainer').style.maxHeight = '500px';
+				document.getElementById('infoContainer').style.maxWidth = '1000px';
+				document.getElementById('infoContainer').style.opacity = 1;
+				setTimeout(function () {
+					document.getElementById('roleDescription').style.fontSize = '20px';
+					document.getElementById('roleDescription').style.opacity = 1;
+				}, 100);
+			}
+		};
 
 		// call api every 0.5 seconds to get the latest player list and update the page
 		setInterval(getPlayers, 500);
@@ -69,7 +82,7 @@
 			// players = JSON.parse(players);
 			console.log(players);
 
-			document.getElementById('playerCount').innerHTML = `Current Players: ${players.length}`;
+			document.getElementById('playerCount').innerHTML = `Spieler: ${players.length}`;
 			// let list = document.querySelector('ul');
 			// list.innerHTML = '';
 			// if (players.length > 0) {
@@ -100,26 +113,40 @@
 			document.getElementById('gamestate').innerHTML = gamestate;
 
 			if (gamestate == 'running') {
-				await fetch('/api/myrole')
+				document.getElementById('gamestate').style.color = 'green';
+				myroledata = '';
+				await fetch('/api/me')
 					.then((r) => r.json())
-					.then((data) => (role = data))
+					.then((data) => (myroledata = data))
 					.catch((e) => console.log('Something went wrong!'));
+				console.log(myroledata);
 
-				await fetch(`./static/roles/${role}/info.json`)
-					.then((r) => r.json())
-					.then((data) => (roleData = data));
-				console.log(roleData);
-				document.getElementById('myrole').innerHTML = roleData['de']['roleName'];
-				document.getElementById('roleDescription').innerHTML = roleData['de']['description'];
-				document.getElementById('roleLore').innerHTML = roleData['de']['lore'];
-				document.getElementById('roleImage').src = `./static/roles/${role}/card.png`;
-                document.getElementById('infoIcon').style.visibility = "visible";
+				if (String(myroledata).includes('Looks like')) {
+					console.log('player not in game');
+					// return;
+				} else {
+					if(myroledata['alive'] == false) {
+						document.getElementById('deathOverlay').style.display = 'block';
+					} else {
+						document.getElementById('deathOverlay').style.display = 'none';
+					}
+					role = myroledata['role'];
+					await fetch(`./static/roles/${role}/info.json`)
+						.then((r) => r.json())
+						.then((data) => (roleData = data));
+					console.log(roleData);
+					document.getElementById('myrole').innerHTML = roleData['de']['roleName'];
+					document.getElementById('roleDescription').innerHTML = roleData['de']['description'];
+					document.getElementById('roleLore').innerHTML = roleData['de']['lore'];
+					document.getElementById('roleImage').src = `./static/roles/${role}/card.png`;
+					document.getElementById('infoIcon').style.visibility = 'visible';
+				}
 			} else {
 				document.getElementById('myrole').innerHTML = '';
 				document.getElementById('roleDescription').innerHTML = '';
 				document.getElementById('roleLore').innerHTML = '';
 				document.getElementById('roleImage').src = '';
-				document.getElementById('infoIcon').style.visibility = "hidden";
+				document.getElementById('infoIcon').style.visibility = 'hidden';
 			}
 		}
 	</script>
