@@ -17,7 +17,7 @@ body {
 .container {
 	height: 100%;
 	width: 100%;
-	background-color: #222;
+	background-color: #000;
 	color: #ddd;
 	display: flex;
 	flex-direction: column;
@@ -37,7 +37,7 @@ body {
 
 .heading {
 	font-size: 40px;
-	color: #fff;
+	color: #eee;
 	font-weight: bold;
 }
 
@@ -67,7 +67,7 @@ body {
 	left: 0;
 	height: 40px;
 	width: 40px;
-	background-color: #555555;
+	background-color: #333;
 	border: none;
 	color: white;
 	padding: 3px;
@@ -86,14 +86,14 @@ body {
 }
 
 .color-foreground {
-	color: #bbb !important;
+	color: #ddd !important;
 }
 
 .sticky {
 	position: fixed;
 	top: 0;
 	width: 100%;
-	background-color: #444;
+	background-color: #222;
 }
 
 .debug {
@@ -130,7 +130,7 @@ body {
 	margin-left: 10px;
 	align-items: center;
 	border: 1px solid #aaa;
-	background-color: #3302;
+	background-color: #3306;
 	border-radius: 10px;
 	opacity: 0;
 	transition: cubic-bezier(1, 0, 0, 1) 0.5s;
@@ -199,3 +199,31 @@ input[type='number']::-webkit-outer-spin-button {
 	font-size: 16px;
 	margin: 4px 2px;
 } */
+
+
+/* death overlay */
+.overlay {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: rgba(111, 111, 111, 0.7);
+	transition: opacity 500ms;
+	z-index: 1000;
+}
+
+.overlay-content {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+	background-color: #333;
+	color: white;
+	font-size: 16px;
+	padding: 20px;
+	width: 80%;
+	max-width: 500px;
+	border-radius: 10px;
+}
