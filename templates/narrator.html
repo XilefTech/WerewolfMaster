@@ -19,12 +19,12 @@
 		<div class="item row" style="height: 45px"></div>
 
 		<div class="item row">
-			<h2>Players:</h2>
+			<h2>Spieler:</h2>
 			<ul></ul>
 		</div>
 
 		<div class="item">
-			<h2 class="row">Roles</h2>
+			<h2 class="row">Rollen</h2>
 			<div class="row rolelist" id="playerRoles"></div>
 		</div>
 
@@ -41,7 +41,7 @@
 			fetch('/api/endgame').catch((e) => console.log('Something went wrong!'));
 
 			list = document.getElementById('playerRoles');
-			list.innerHTML = '<p><strong>Player</stong></p><p><strong>Role</stong></p><p><strong>Card</stong></p>';
+			list.innerHTML = '<p><strong>Spieler</stong></p><p><strong>Rolle</stong></p><p><strong>Karte</stong></p>';
 		}
 	};
 
@@ -63,6 +63,9 @@
 </script>
 
 <script type="text/javascript">
+	oldData = {};
+
+	setInterval(getGameData, 1000)
 	fetch('/api/gamestate')
 		.then((r) => r.json())
 		.then((data) => {
@@ -79,23 +82,35 @@
 			.then((data) => (gameData = data))
 			.catch((e) => console.log('Something went wrong!'));
 
+		if(gameData["status"] != "success") {
+			return;
+		}
+		gameData = gameData["data"];
 		//clear the player list
 		list = document.getElementById('playerRoles');
-		list.innerHTML = '<p><strong>Player</stong></p><p><strong>Role</stong></p><p><strong>Card</stong></p>';
+		
 
 		// get the proper names for all the roles
 		await fetch('/api/getRoleMappings')
 			.then((r) => r.json())
 			.then((data) => (roleMappings = data))
 			.catch((e) => console.log('Something went wrong!'));
+		console.debug("gd", gameData)
+		if(JSON.stringify(gameData) == JSON.stringify(oldData)) {
+			return;
+		} else {
+			console.log("new data")
+		}
+		oldData = gameData;
+		list.innerHTML = '<p><strong>Spieler</stong></p><p><strong>Rolle</stong></p><p><strong>Karte</stong></p>';
 
 		// for each player, add a row with name, role and card
-		for (const [name, role] of Object.entries(gameData)) {
+		for (const [name, profile] of Object.entries(gameData)) {
 			nameField = document.createElement('p');
 			nameField.innerHTML = name.charAt(0).toUpperCase() + name.slice(1);
-
 			roleField = document.createElement('p');
-			roleField.innerHTML = roleMappings[role];
+			roleField.innerHTML = roleMappings[profile["role"]];
+			
 
 			// The card image, untilizing a checkbox to do the zooming-effect thingy
 			// <div class="container">
@@ -112,10 +127,18 @@
 			label = document.createElement('label');
 			label.htmlFor = `${name}_zoomCheck`;
 			img = document.createElement('img');
-			img.src = `/static/roles/${role}/card.png`;
+			img.src = `/static/roles/${profile["role"]}/card.png`;
 			img.className = 'role-card';
 			img.width = 50;
 			img.height = 50;
+			if(!profile["alive"]) {
+				nameField.style = "text-decoration: line-through";
+				roleField.style = "text-decoration: line-through";
+				img.style = "filter: grayscale(100%)";
+			}
+			if(profile["inLove"]) {
+				nameField.innerHTML += ' <i class="fa-solid fa-heart" style="color: red;"></i>'
+			}
 			label.appendChild(img);
 			div.appendChild(checkbox);
 			div.appendChild(label);
@@ -147,12 +170,12 @@
 				li.innerText = player.charAt(0).toUpperCase() + player.slice(1);
 				list.appendChild(li);
 			});
-			document.querySelector('h2').innerHTML = 'Players: ' + players.length;
+			document.querySelector('h2').innerHTML = 'Spieler: ' + players.length;
 		} else {
 			let li = document.createElement('li');
 			li.innerText = 'No players yet';
 			list.appendChild(li);
-			document.querySelector('h2').innerHTML = 'Players: 0';
+			document.querySelector('h2').innerHTML = 'Spieler: 0';
 		}
 	}
 </script>
