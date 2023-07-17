@@ -14,7 +14,7 @@
 		<div class="item row" style="height: 45px"></div>
 
 		<div class="item row">
-			<h1 id="cardCount">Total cards: 0</h1>
+			<h1 id="cardCount">Karten: 0</h1>
 		</div>
 		<div class="item cardlist" id="cardList"></div>
 	</div>
@@ -76,7 +76,7 @@
 					}
 				});
 
-			document.getElementById('cardCount').innerHTML = `Total cards: ${totalCardCount}`;
+			document.getElementById('cardCount').innerHTML = `Karten: ${totalCardCount}`;
 		});
 
 		async function updateCardCount() {
@@ -87,7 +87,7 @@
 					totalCardCount += parseInt(data[i]);
 				}
 
-				document.getElementById('cardCount').innerHTML = `Total cards: ${totalCardCount}`;
+				document.getElementById('cardCount').innerHTML = `Karten: ${totalCardCount}`;
 			});
 		}
 
