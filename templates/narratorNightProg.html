@@ -1,24 +1,53 @@
 {% include "head.html.j2" %}
 <body>
 	<div class="container color-foreground">
+		<div class="item row sticky alwaysTop">
+			<a href="/narrator">
+				<div class="button" type="submit">
+					<svg class="icon center" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+						<path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
+					</svg>
+				</div>
+			</a>
+			<h1 class="item row heading">{{ username }}</h1>
+			<div class="button" type="submit" onclick="$('#playerOverlay').show()" style="left: 0px">
+				<svg xmlns="http://www.w3.org/2000/svg" width="1406" height="40" fill="currentColor" class="bi bi-list-ul" viewBox="0 0 16 16">
+					<path
+						fill-rule="evenodd"
+						d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm-3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
+				</svg>
+			</div>
+		</div>
 		<h1>Story time</h1>
-		<iframe name='formresponse' width='200' height='50' style="background-color: white;"></iframe>
+		<iframe name="formresponse" width="200" height="50" style="background-color: rgba(100, 100, 100, 0.4); border-color: #fff6; border-radius: 5px"></iframe>
+		<br />
 		<button onclick="nextFrame()">Next</button>
+		<button onclick="prevFrame()">Prev</button>
+		<hr style="width: 100vw" />
 		<!--
 			Ablauf der Nacht:
 			-"cupid",
-			-"thief", 
-			"fox",
 			"wild_kiddo",
+			-"thief", 
+			"fox", TODO -> show all player
 			"slut",
 			"seer",
 			"wolf",
 			"wolf_primeval",
 			"wolf_white",
 			"witch"
+			-- day --
+			
+        		"knight",
+			"hunter",
+        	"maiden",
+        	"bearleader",
+        	"winking_girl",
+        	"hunter"
+    ]
 		-->
 		<div id="frame_cupid">
-			<h2>1. Amor</h2>
+			<h2>Amor</h2>
 			<div class="explainer" id="explain_cupid">Infotext wird geladen...</div>
 			<form action="/api/action/role/cupid" target="formresponse">
 				<!-- User select -->
@@ -31,60 +60,481 @@
 				<button type="submit">Absenden</button>
 			</form>
 		</div>
+		<div id="frame_thief">
+			<h2>Dieb</h2>
+			<div class="explainer" id="explain_thief">Infotext wird geladen...</div>
+			<form action="/api/action/role/thief" target="formresponse">
+				<!-- User select -->
+				<label for="cars">Dieb:</label>
+
+				<select name="thief" id="fill_player_3" class="playerLoader" data-jobFilter="thief"></select>
+				<label for="cars">Spieler:</label>
+
+				<select name="player" id="fill_player_4" class="playerLoader"></select>
+				<button type="submit">Absenden</button>
+			</form>
+		</div>
+		<div id="frame_fox">
+			<h2>Fuchs</h2>
+			<div class="explainer" id="explain_fox">Infotext wird geladen...</div>
+			<strong>Bitte die Spielerliste oben links verwenden.</strong>
+		</div>
+		<div id="frame_wild_kiddo">
+			<h2>Wilder Junge</h2>
+			<div class="explainer" id="explain_wild_kiddo">Infotext wird geladen...</div>
+			<strong>Diese Rolle unterstützt aktuell keine Aktionen.</strong>
+		</div>
+		<div id="frame_slut">
+			<h2>Dorfschlampe</h2>
+			<div class="explainer" id="explain_slut">Infotext wird geladen...</div>
+			<form action="/api/action/role/slut" target="formresponse">
+				<!-- User select -->
+				<label for="cars">Dorfschlampe:</label>
+
+				<select name="slut" id="fill_player_5" class="playerLoader" data-jobFilter="slut"></select>
+				<label for="cars">Spieler:</label>
+
+				<select name="player" id="fill_player_6" class="playerLoader"></select>
+				<button type="submit">Absenden</button>
+			</form>
+		</div>
+		<div id="frame_seer">
+			<h2>Seher</h2>
+			<div class="explainer" id="explain_seer">Infotext wird geladen...</div>
+			<strong>Bitte die Spielerliste oben links verwenden.</strong>
+		</div>
+		<div id="frame_wolf">
+			<h2>Wölfe</h2>
+			<div class="explainer" id="explain_wolf">Infotext wird geladen...</div>
+			<form action="/api/action/killPlayer" target="formresponse">
+				<!-- User select -->
+				<label for="cars">Ziel:</label>
+				<select name="player" id="fill_player_7" class="playerLoader"></select>
+				<button type="submit">Absenden</button>
+			</form>
+		</div>
+		<div id="frame_wolf_primeval">
+			<h2>Urwolf</h2>
+			<div class="explainer" id="explain_wolf_primeval">Infotext wird geladen...</div>
+			<strong>Diese Rolle unterstützt aktuell keine Aktionen.</strong>
+		</div>
+		<div id="frame_wolf_white">
+			<h2>Weißer Wolf</h2>
+			<div class="explainer" id="explain_wolf_white">Infotext wird geladen...</div>
+			<form action="/api/action/killPlayer" target="formresponse">
+				<!-- User select -->
+				<label for="cars">Ziel (nur jede 2te Runde!):</label>
+				<select name="player" id="fill_player_8" class="playerLoader"></select>
+				<button type="submit">Absenden</button>
+			</form>
+		</div>
+		<div id="frame_witch">
+			<h2>Hexe</h2>
+			<div class="explainer" id="explain_witch">Infotext wird geladen...</div>
+			<form action="/api/action/role/witch" target="formresponse">
+				<!-- User select -->
+				<label for="cars">Hexe:</label>
+				<select name="witch" id="fill_player_9" class="playerLoader" data-jobFilter="witch" onchange="updateWitchPotions()"></select>
+				<label for="cars">Ziel:</label>
+				<select name="player" id="fill_player_10" class="playerLoader"></select>
+				<label for="cars">Action:</label>
+				<select name="action" id="witchActions" class=""></select>
+				<button type="submit" onsubmit="updateWitchPotions()">Absenden</button>
+			</form>
+		</div>
+		<div id="frame_day">
+			<h2>Die Sonne geht auf</h2>
+			<div id="deathTally"><i>Die Daten werden geladen...</i></div>
+			<strong>
+				<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" fill="currentColor" class="bi bi-sunrise-fill" viewBox="0 0 16 16">
+					<path
+						d="M7.646 1.146a.5.5 0 0 1 .708 0l1.5 1.5a.5.5 0 0 1-.708.708L8.5 2.707V4.5a.5.5 0 0 1-1 0V2.707l-.646.647a.5.5 0 1 1-.708-.708l1.5-1.5zM2.343 4.343a.5.5 0 0 1 .707 0l1.414 1.414a.5.5 0 0 1-.707.707L2.343 5.05a.5.5 0 0 1 0-.707zm11.314 0a.5.5 0 0 1 0 .707l-1.414 1.414a.5.5 0 1 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zM11.709 11.5a4 4 0 1 0-7.418 0H.5a.5.5 0 0 0 0 1h15a.5.5 0 0 0 0-1h-3.79zM0 10a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2A.5.5 0 0 1 0 10zm13 0a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z" />
+				</svg>
+			</strong>
+		</div>
+		<div id="frame_knight">
+			<h2>Ritter</h2>
+			<div class="explainer" id="explain_knight">Infotext wird geladen...</div>
+			<form action="/api/action/killPlayer?nextRound=true" target="formresponse">
+				<!-- User select -->
+				<label for="cars">Werwolf zur Linken des Spielers:</label>
+				<select name="player" id="fill_player_9" class="playerLoader" data-jobFilter="wolf"></select>
+				<button type="submit">Absenden</button>
+			</form>
+		</div>
+		<div id="frame_hunter">
+			<h2>Jäger</h2>
+			<div class="explainer" id="explain_hunter">Infotext wird geladen...</div>
+			<form action="/api/action/killPlayer&dayKill=true" target="formresponse">
+				<!-- User select -->
+				<label for="cars">Ziel:</label>
+				<select name="player" id="fill_player_9" class="playerLoader"></select>
+				<button type="submit">Absenden</button>
+			</form>
+		</div>
+		<div id="frame_maiden">
+			<h2>Keine AHnung maid halt</h2>
+			<div class="explainer" id="explain_maiden">Infotext wird geladen...</div>
+			<strong>Diese Rolle unterstützt aktuell keine Aktionen.</strong>
+		</div>
+		<div id="frame_bearleader">
+			<h2>Bärenanführer</h2>
+			<div class="explainer" id="explain_bearleader">Infotext wird geladen...</div>
+			<strong>Diese Rolle unterstützt aktuell keine Aktionen.</strong>
+		</div>
+		<div id="frame_end_round">
+			<h2>Runden Ende</h2>
+			<strong>Das Runden Ende wurde erreicht.</strong>
+			<button onclick="newRound()">Neue Runde starten</button>
+		</div>
 	</div>
-	<script>
-		
+	<!-- Player death overlay -->
+	<div class="overlay" id="deathOverlay" style="display: none">
+		<div class="overlay-content">
+			<center>
+				<h1 class="heading">Es läuft kein Spiel</h1>
+				<p class="">Bitte auf den "Narrator"-Bildschirm ein Spiel starten</p>
+			</center>
+			<div class="row">
+				<i class="fa-solid fa-flag-checkered" style="font-size: 100px"></i>
+			</div>
+			<a href="/narrator">
+				<div class="button" type="submit">
+					<svg class="icon center" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+						<path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
+					</svg>
+				</div>
+			</a>
+		</div>
+	</div>
+
+	<!-- Player overlay -->
+	<div class="overlay" id="playerOverlay">
+		<div class="overlay-content">
+			<center>
+				<h1 class="heading">Spielerliste</h1>
+				<div id="playerRoles" class="row rolelist"></div>
+			</center>
+
+			<div class="button" type="submit" onclick="dismissPlayerList()">
+				<svg class="icon center" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+					<path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
+				</svg>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		loadOtherData = true;
+		console.info('Loading players');
+		$('#playerOverlay').hide();
+		function loadPlayers() {
+			// Load alive players
+			if (loadOtherData) {
+				$.ajax({
+					url: '/api/getAlivePlayers',
+					async: true,
+					success: function (result) {
+						const allPlayerLoader = $('.playerLoader');
+						console.log('Got result for alive players');
+						result = JSON.parse(result);
+						result = result['data'];
+						for (var i = 0; i < allPlayerLoader.length; i++) {
+							console.debug('loop');
+							var elm = allPlayerLoader[i];
+							console.debug(elm);
+							elm.innerHTML = ``;
+							if (elm.dataset.jobfilter != undefined) {
+								$.ajax({
+									url: '/api/getPlayersByRole?role=' + elm.dataset.jobfilter,
+									async: false,
+									success: function (result) {
+										result = JSON.parse(result);
+										result = result['data'];
+										console.log(result);
+										for (var i = 0; i < result.length; i++) {
+											elm.innerHTML += `<option value="${result[i]}">${result[i]}</option>`;
+										}
+									}
+								});
+							} else {
+								for (var j = 0; j < result.length; j++) {
+									elm.innerHTML += `<option value="${result[j]}">${result[j]}</option>`;
+								}
+							}
+						}
+					}
+				});
+			}
+		}
+		// loadPlayers();
+	</script>
+	<script type="text/javascript">
+		const frameOrder = [
+			'frame_cupid',
+			'frame_wild_kiddo',
+			'frame_thief',
+			'frame_fox',
+			'frame_slut',
+			'frame_seer',
+			'frame_wolf',
+			'frame_wolf_primeval',
+			'frame_witch',
+			'frame_wolf_white',
+			'frame_day',
+			'frame_knight',
+			'frame_hunter',
+			'frame_maiden',
+			'frame_bearleader',
+			'frame_end_round'
+		];
+		const firstRoundFrames = ['frame_cupid', 'frame_wild_kiddo'];
+		var isDay = false;
+		var loadOtherData = true;
+		$.ajax({
+			url: '/api/gamestate',
+			async: true,
+			success: function (result) {
+				if (result == 0) {
+					$('#deathOverlay').show();
+					loadOtherData = false;
+				}
+			}
+		});
+		var currentGameStatus = $.ajax({
+			url: '/api/gamestate',
+			async: false
+		}).responseText;
+		setInterval(() => {
+			currentGameStatus = $.ajax({
+				url: '/api/gamestate',
+				async: false
+			}).responseText;
+			getGameData();
+		}, 1000);
+
+		var nightProgressionPercent = 0;
 		var currentFrame = 0;
-		const frameOrder = ["frame_cupid", "frame_thief", "frame_fox", "frame_wild_kiddo", "frame_slut", "frame_seer", "frame_wolf", "frame_wolf_primeval", "frame_wolf_white", "frame_witch", "frame_round_end"];
+		// set current frame to url param if set
+		const urlParams = new URLSearchParams(window.location.search);
+		const frameParam = urlParams.get('frame');
+		if (frameParam != null) {
+			currentFrame = frameOrder.indexOf(frameParam);
+		}
+
 		function nextFrame() {
 			currentFrame++;
 			updateFrameViewer();
 		}
+		function prevFrame() {
+			currentFrame--;
+			updateFrameViewer();
+		}
 		function updateFrameViewer() {
 			// Hide all frames expect current one
-			frameOrder.forEach(elm => {
-				$(elm).hide();
-			})
-			$(frameOrder[currentFrame]).show()
+			console.info('Updating view');
+			if(currentFrame == 0) {
+				currentGameStatus = $.ajax({
+					url: '/api/gamestate',
+					async: false
+				}).responseText;
+			}
+
+			frameOrder.forEach((elm) => {
+				$('#' + elm).hide();
+			});
+			while (firstRoundFrames.includes(frameOrder[currentFrame]) && currentGameStatus > 1) {
+				currentFrame++;
+			}
+			// Calculate night progression
+			
+			nightProgressionPercent = (currentFrame / frameOrder.length) * 100;
+			
+			$('#' + frameOrder[currentFrame]).show();
+			if (frameOrder[currentFrame] == 'frame_day') {
+				isDay = true;
+				console.info('Loading night end data');
+				$.ajax({
+					url: '/api/getNightsDeaths',
+					async: true,
+					success: function (res) {
+						res = JSON.parse(res);
+						console.log('Night end data', res);
+						if (res.status == 'success') {
+							console.log('Night end data', res.data);
+							var elm = `<strong>Insgesamte Tode: </strong>${res.data.length}<ul>`;
+							res.data.forEach((entr) => {
+								elm += `<li>${entr}</li>`;
+							});
+							elm += '</ul>';
+							console.log(elm);
+							$('#deathTally').html(elm);
+						} else if (res.status == 'missing') {
+							var elm = '<strong>Es stehen noch Aktionen aus</strong><ul>';
+							res.data.forEach((entr) => {
+								elm += `<li>${entr}</li>`;
+							});
+							elm += '</ul>';
+							if(res.data.includes("knight")) {
+								$('#frame_knight').show();
+							}
+							$('#deathTally').html(elm);
+						}
+					}
+				});
+			} else if (frameOrder[currentFrame] == 'frame_end_round') {
+				isDay = false;
+				console.log("last frame")
+			}
+			// Disable fill_player_8 if current round count is even
+			if (currentGameStatus % 2 != 0) {
+				$('#fill_player_8').prop('disabled', true);
+			} else {
+				$('#fill_player_8').prop('disabled', false);
+			}
+			if (loadOtherData) {
+				loadPlayers();
+			}
+			// in the future push the blob through a gradient to make it look like a sunrise
+			if (isDay) {
+				// Set background image to "blobDay.svg"
+				$('body').css('background-image', 'url(/static/blobDay.svg)');
+			} else {
+				// Set background image to "blob.svg"
+				$('body').css('background-image', 'url(/static/blob.svg)');
+			}
 		}
 		updateFrameViewer();
 	</script>
-	<script>
-		// Load descriptions
-		const allExplainer = $('.explainer');
-		console.log(allExplainer);
-		for (var i = 0; i <= allExplainer.length; i++) {
-			elm = allExplainer[i];
-			const roleName = elm.id.split('_')[1];
-			console.info('Loading ' + roleName);
-			// Load ajax description
-			result = $.ajax({
-				url: `/static/roles/${roleName}/info.json`,
-				async: false
-			});
-			result = JSON.parse(result.responseText)
-			console.log(result)
-			console.log(elm)
-			elm.innerText = result.de.description;
+	<script type="text/javascript">
+		if (loadOtherData) {
+			// Load descriptions
+			const allExplainer = $('.explainer');
+			console.log(allExplainer);
+			for (var i = 0; i < allExplainer.length; i++) {
+				elm = allExplainer[i];
+				const roleName = elm.id.substring(elm.id.indexOf('_') + 1);
+				console.info('Loading ' + roleName);
+				// Load ajax description
+				result = $.ajax({
+					url: `/static/roles/${roleName}/info.json`,
+					async: false
+				});
+				result = JSON.parse(result.responseText);
+				//console.log(result)
+				// console.log(elm)
+				elm.innerText = result.de.description;
+			}
 		}
-	</script>
-	<script>
-		console.info("Loading players")
-		// Load alive players 
-		const allPlayerLoader = $('.playerLoader');
-		console.log(allPlayerLoader);
-		for(var i = 0; i <= allPlayerLoader.length; i++) {
-			elm = allPlayerLoader[i];
+
+		function dismissPlayerList() {
+			$('#playerOverlay').hide();
+		}
+
+		oldData = {};
+
+		async function getGameData() {
+			// retrieve game data
+			await fetch('/api/getGameData')
+				.then((r) => r.json())
+				.then((data) => (gameData = data))
+				.catch((e) => console.log('Something went wrong!'));
+
+			if (gameData['status'] != 'success') {
+				return;
+			}
+			gameData = gameData['data'];
+			//clear the player list
+			list = document.getElementById('playerRoles');
+
+			// get the proper names for all the roles
+			await fetch('/api/getRoleMappings')
+				.then((r) => r.json())
+				.then((data) => (roleMappings = data))
+				.catch((e) => console.log('Something went wrong!'));
+			console.debug('gd', gameData);
+			if (JSON.stringify(gameData) == JSON.stringify(oldData)) {
+				return;
+			} else {
+				console.log('new data');
+			}
+			oldData = gameData;
+			list.innerHTML = '<p><strong>Spieler</stong></p><p><strong>Rolle</stong></p><p><strong>Karte</stong></p>';
+
+			// for each player, add a row with name, role and card
+			for (const [name, profile] of Object.entries(gameData)) {
+				nameField = document.createElement('p');
+				nameField.innerHTML = name.charAt(0).toUpperCase() + name.slice(1);
+				roleField = document.createElement('p');
+				roleField.innerHTML = roleMappings[profile['role']];
+
+				// The card image, untilizing a checkbox to do the zooming-effect thingy
+				// <div class="container">
+				//   <input type="checkbox" id="zoomCheck">
+				//   <label for="zoomCheck">
+				//     <img src="https://via.placeholder.com/200">
+				//   </label>
+				// </div>
+				div = document.createElement('div');
+				div.className = 'zoomy_image';
+				checkbox = document.createElement('input');
+				checkbox.type = 'checkbox';
+				checkbox.id = `${name}_zoomCheck`;
+				label = document.createElement('label');
+				label.htmlFor = `${name}_zoomCheck`;
+				img = document.createElement('img');
+				img.src = `/static/roles/${profile['role']}/card.png`;
+				img.className = 'role-card';
+				img.width = 50;
+				img.height = 50;
+				if (!profile['alive']) {
+					nameField.style = 'text-decoration: line-through';
+					roleField.style = 'text-decoration: line-through';
+					img.style = 'filter: grayscale(100%)';
+				}
+				if (profile['inLove']) {
+					nameField.innerHTML += ' <i class="fa-solid fa-heart" style="color: red;"></i>';
+				}
+				label.appendChild(img);
+				div.appendChild(checkbox);
+				div.appendChild(label);
+
+				list.appendChild(nameField);
+				list.appendChild(roleField);
+				list.appendChild(div);
+			}
+		}
+
+		function updateWitchPotions() {
+			if (frameOrder[currentFrame] == 'frame_witch') {
+				if ($('#fill_player_9').val() != null) {
+					$.ajax({
+						url: '/api/getWitchPotions?player=' + $('#fill_player_9').val(),
+						success: function (res) {
+							var elms = '';
+							res = JSON.parse(res);
+							elms = res['data']
+								.map((e) => {
+									return `<option value="${e}">${e}</option>`;
+								})
+								.join('');
+
+							console.log(elms, $('#witchActions'));
+							$('#witchActions').html(elms);
+						}
+					});
+				}
+			}
+		}
+		setInterval(updateWitchPotions, 500);
+		updateWitchPotions();
+
+		function newRound() {
 			$.ajax({
-				url: '/api/getAlivePlayers',
-				async: false,
-				success: function(result) {
-					result= JSON.parse(result);
-					result = result["data"]
-					console.log(result);
-					for(var i = 0; i < result.length; i++) {
-						elm.innerHTML += `<option value="${result[i]}">${result[i]}</option>`;
-					}
+				url: '/api/endround',
+				async: true,
+				success: function (res) {
+					currentFrame = 0;
+					updateFrameViewer();
 				}
 			});
 		}
