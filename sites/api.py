@@ -34,7 +34,7 @@ def api_path(subpath):
 	
 
 	if subpath == "gamestate":
-		return dumps(gamestates[gamestate])
+		return dumps(gamestate)
 	
 
 	if subpath == "me":
