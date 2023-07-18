@@ -16,9 +16,22 @@ body {
 	background-repeat: no-repeat;
 	background-size: contain;
 	background-color: #000;
+	-webkit-transition: background-image 1s ease-in-out;
+	transition: background-image 1s ease-in-out;
 
 }
 
+* {
+	font-family: sans-serif;
+}
+
+.alwaysTop {
+	z-index: 1000000000;
+}
+
+.explainer{
+	padding: 10px;
+}
 
 .container {
 	height: 100%;
