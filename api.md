@@ -5,17 +5,22 @@
 - endround
 - endgame
 - startgame
+- getNightsDeaths
+- getWitchPotions?player=string
+- getPlayersByRole?role=string
 - getAlivePlayers
 - getGameData
 - getAvailiableRoles
 - getRoleMappings
 - getRoleEntries
 - action/
-- - hangPlayer
+- - hangPlayer?player=string
 - - killPlayer?player=string
 - - role/
 - - - cupid?player1=string&player2=string
 - - - thief?player=string&thief=string
 - - - slut?player=string&slut=string
+- - - witch?withc=string&action=none/heal/kill&player=string
+- - - wolf_white
 - settings/
 - - setRoleEntry?role=string&value=int
