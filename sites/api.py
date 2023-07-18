@@ -22,6 +22,16 @@ def api_path(subpath):
 	if subpath == "players":
 		return dumps(sorted(players))
 	
+	if subpath == "getAlivePlayers":
+		if not gamestate:
+			return dumps({"status": "failed", "data": "Error: Game not running!"})
+		
+		alivePlayers = []
+		for player in playerStats:
+			if playerStats[player]["alive"]:
+				alivePlayers.append(player)
+		return dumps({"status": "success", "data": sorted(alivePlayers)})
+	
 
 	if subpath == "gamestate":
 		return dumps(gamestates[gamestate])
@@ -39,6 +49,11 @@ def api_path(subpath):
 			return dumps(playerStats[name])
 		
 		return dumps("Looks like you're not in the game!")
+
+
+	if subpath == "endround":
+		gamestate += 1
+		return dumps("success")
 
 
 	if subpath == "endgame":
