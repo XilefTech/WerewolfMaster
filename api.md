@@ -1,0 +1,21 @@
+/api/
+- players
+- gamestate
+- me
+- endround
+- endgame
+- startgame
+- getAlivePlayers
+- getGameData
+- getAvailiableRoles
+- getRoleMappings
+- getRoleEntries
+- action/
+- - hangPlayer
+- - killPlayer?player=string
+- - role/
+- - - cupid?player1=string&player2=string
+- - - thief?player=string&thief=string
+- - - slut?player=string&slut=string
+- settings/
+- - setRoleEntry?role=string&value=int
