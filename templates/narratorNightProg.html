@@ -1,0 +1,92 @@
+{% include "head.html.j2" %}
+<body>
+	<div class="container color-foreground">
+		<h1>Story time</h1>
+		<iframe name='formresponse' width='200' height='50' style="background-color: white;"></iframe>
+		<button onclick="nextFrame()">Next</button>
+		<!--
+			Ablauf der Nacht:
+			-"cupid",
+			-"thief", 
+			"fox",
+			"wild_kiddo",
+			"slut",
+			"seer",
+			"wolf",
+			"wolf_primeval",
+			"wolf_white",
+			"witch"
+		-->
+		<div id="frame_cupid">
+			<h2>1. Amor</h2>
+			<div class="explainer" id="explain_cupid">Infotext wird geladen...</div>
+			<form action="/api/action/role/cupid" target="formresponse">
+				<!-- User select -->
+				<label for="cars">Spieler 1:</label>
+
+				<select name="player1" id="fill_player_1" class="playerLoader"></select>
+				<label for="cars">Spieler 2:</label>
+
+				<select name="player2" id="fill_player_2" class="playerLoader"></select>
+				<button type="submit">Absenden</button>
+			</form>
+		</div>
+	</div>
+	<script>
+		updateFrameViewer();
+		var currentFrame = 0;
+		const frameOrder = ["frame_cupid", "frame_thief", "frame_fox", "frame_wild_kiddo", "frame_slut", "frame_seer", "frame_wolf", "frame_wolf_primeval", "frame_wolf_white", "frame_witch", "frame_round_end"];
+		function nextFrame() {
+			currentFrame++;
+			updateFrameViewer();
+		}
+		function updateFrameViewer() {
+			// Hide all frames expect current one
+			frameOrder.forEach(elm => {
+				$(elm).hide();
+			})
+			$(frameOrder[currentFrame]).show()
+
+		}
+	</script>
+	<script>
+		// Load descriptions
+		const allExplainer = $('.explainer');
+		console.log(allExplainer);
+		for (var i = 0; i <= allExplainer.length; i++) {
+			elm = allExplainer[i];
+			const roleName = elm.id.split('_')[1];
+			console.info('Loading ' + roleName);
+			// Load ajax description
+			result = $.ajax({
+				url: `/static/roles/${roleName}/info.json`,
+				async: false
+			});
+			result = JSON.parse(result.responseText)
+			console.log(result)
+			console.log(elm)
+			elm.innerText = result.de.description;
+		}
+	</script>
+	<script>
+		console.info("Loading players")
+		// Load alive players 
+		const allPlayerLoader = $('.playerLoader');
+		console.log(allPlayerLoader);
+		for(var i = 0; i <= allPlayerLoader.length; i++) {
+			elm = allPlayerLoader[i];
+			$.ajax({
+				url: '/api/getAlivePlayers',
+				async: false,
+				success: function(result) {
+					result= JSON.parse(result);
+					result = result["data"]
+					console.log(result);
+					for(var i = 0; i < result.length; i++) {
+						elm.innerHTML += `<option value="${result[i]}">${result[i]}</option>`;
+					}
+				}
+			});
+		}
+	</script>
+</body>

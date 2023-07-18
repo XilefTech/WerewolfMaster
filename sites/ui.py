@@ -60,3 +60,7 @@ def narratorMain():
 @ui.route("/narrator/settings")
 def narratorSettings():
 	return render_template("settings.html")
+
+@ui.route("/narrator/story")
+def narratorStory():
+	return render_template("narratorNightProg.html")
