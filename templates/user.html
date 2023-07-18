@@ -112,7 +112,7 @@
 			console.log(gamestate);
 			document.getElementById('gamestate').innerHTML = gamestate;
 
-			if (gamestate == 'running') {
+			if (gamestate) {
 				document.getElementById('gamestate').style.color = 'green';
 				myroledata = '';
 				await fetch('/api/me')
