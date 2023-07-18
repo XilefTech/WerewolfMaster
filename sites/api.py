@@ -237,6 +237,30 @@ def roleAction(path, request):
 		playerStats[player]["role"] = "thief"
 
 		return "success"
+	
+	if "slut" in path:
+		try:
+			fucksWith = request.args["player"]
+			if fucksWith not in players:
+				return "Error: Player not in game!"
+			if not playerStats[fucksWith]["alive"]:
+				return "Error: Player already dead!"
+		except KeyError:
+			return "Error: Player not specified!"
+		
+		try:
+			slut = request.args["slut"]
+			if slut not in players:
+				return "Error: Player not in game!"
+			if not playerStats[slut]["alive"]:
+				return "Error: Player already dead!"
+		except KeyError:
+			return "Error: Player not specified!"
+		
+		playerStats[slut]["sleepsAt"] = fucksWith
+		return "success"
+		
+		
 
 
 
