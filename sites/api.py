@@ -3,7 +3,8 @@ import os
 import random
 from flask import Blueprint, request
 
-from gameData import gamestate, gamestates, players, assignedRoles, roles, playerStats
+import roleActions
+from gameData import gamestate, gamestates, players, assignedRoles, roles, playerStats, lastKilledPlayers, knightKill
 
 
 api = Blueprint('API', __name__, template_folder='templates', static_folder='static')
@@ -14,7 +15,7 @@ def api_mainpage():
 
 @api.route("/api/<path:subpath>")
 def api_path(subpath):
-	global gamestate, assignedRoles, playerStats
+	global gamestate, assignedRoles, playerStats, players, lastKilledPlayers, knightKill
 	# if a playertimeout is needed, uncomment this, resets the timeout value with every api request
 	# if request.cookies.get("username"):
 	#     playerTimeout[request.cookies.get("username")] = timeout
@@ -22,6 +23,33 @@ def api_path(subpath):
 	if subpath == "players":
 		return dumps(sorted(players))
 	
+
+	if subpath == "getNightsDeaths":
+		if not gamestate:
+			return dumps({"status": "failed", "data": "Error: Game not running!"})
+
+		missingActions = []
+
+		if knightKill == gamestate - 1:
+			knightKill = False
+			missingActions.append("knight")
+
+		for p in lastKilledPlayers:
+			if playerStats[p]["role"] in ["hunter"]:
+				missingActions.append(playerStats[p]["role"])
+			if playerStats[p]["role"] in ["knight"]:
+				knightKill = gamestate
+		
+		
+		if len(missingActions) > 0:
+			return dumps({"status": "missing", "data": missingActions})
+
+		for p in lastKilledPlayers:
+			playerStats[p]["alive"] = False
+
+		return dumps({"status": "success", "data": lastKilledPlayers})
+	
+
 	if subpath == "getAlivePlayers":
 		if not gamestate:
 			return dumps({"status": "failed", "data": "Error: Game not running!"})
@@ -32,6 +60,42 @@ def api_path(subpath):
 				alivePlayers.append(player)
 		return dumps({"status": "success", "data": sorted(alivePlayers)})
 	
+
+	if subpath == "getPlayersByRole":
+		if not gamestate:
+			return dumps({"status": "failed", "data": "Error: Game not running!"})
+		
+		try:
+			role = request.args["role"]
+			if role not in roles.keys():
+				return dumps({"status": "failed", "data": "Error: Role not found!"})
+		except KeyError:
+			return dumps({"status": "failed", "data": "Error: No role specified!"})
+		
+		playersByRole = []
+		for player in playerStats:
+			if playerStats[player]["role"] == role and playerStats[player]["alive"]:
+				playersByRole.append(player)
+
+		return dumps({"status": "success", "data": sorted(playersByRole)})
+	
+	if subpath == "getWitchPotions":
+		if not gamestate:
+			return dumps({"status": "failed", "data": "Error: Game not running!"})
+		
+		try:
+			player = request.args["player"]
+		except KeyError:
+			return dumps({"status": "failed", "data": "Error: No player specified!"})
+		
+		if player not in playerStats.keys():
+			return dumps({"status": "failed", "data": "Error: Player not found!"})
+		
+		if playerStats[player]["role"] != "witch":
+			return dumps({"status": "failed", "data": "Error: Player is not a witch!"})
+		
+		return dumps({"status": "success", "data": playerStats[player]["potions"]})
+
 
 	if subpath == "gamestate":
 		return dumps(gamestate)
@@ -53,6 +117,7 @@ def api_path(subpath):
 
 	if subpath == "endround":
 		gamestate += 1
+		lastKilledPlayers = []
 		return dumps("success")
 
 
@@ -77,8 +142,8 @@ def api_path(subpath):
 		
 		random.shuffle(gameRoles)
 		for index, player in enumerate(players):
-			playerStats[player] = {"role": gameRoles[index], "alive": True, "inLove": False}
-		
+			playerStats[player] = {"role": gameRoles[index], "alive": True, "inLove": False, "potions": ["heal", "kill"]}
+
 		gamestate = 1
 
 		return dumps({"status": "success", "data": playerStats})
@@ -124,7 +189,8 @@ def api_path(subpath):
 	if "settings/" in subpath:
 		return dumps(settings(subpath, request))
 		
-	return subpath
+	return dumps({"status": "failed", "data": "Error: Path not found!", "path": subpath})
+
 
 def action(path, request):
 	if "/role/" in path:
