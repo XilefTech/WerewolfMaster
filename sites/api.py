@@ -129,26 +129,64 @@ def api_path(subpath):
 def action(path, request):
 	if "/role/" in path:
 		return roleAction(path, request)
-			
-	if "killPlayer" in path:
-		try:
-			player = request.args["player"]
-		except KeyError:
-			return "Error: No player specified!"
+	
+	try:
+		player = request.args["player"]
+	except KeyError:
+		return "Error: No player specified!"
+	
 
+	if "hangPlayer" in path:
 		if playerStats[player]["alive"]:
+			# hunter
+			if playerStats[player]["role"] == "hunter":
+				try:
+					victim = request.args["victim"]
+					if victim not in players:
+						return "Error: Victim not in game!"
+					if not playerStats[victim]["alive"]:
+						return "Error: Player already dead!"
+				except KeyError:
+					return "Error: No victim specified!"
+			
+			playerStats[victim]["alive"] = False
+			playerStats[player]["alive"] = False
+
+			# kill loved ones
 			if playerStats[player]["inLove"]:
 				for p in playerStats:
 					if playerStats[p]["inLove"] and p != player:
 						playerStats[p]["alive"] = False
+
+			return "success"
+		else:
+			return "Error: Player already dead!"
+			
+	if "killPlayer" in path:
+		killedPlayers = []
+
+		if playerStats[player]["alive"]:
+			# kill loved ones
+			if playerStats[player]["inLove"]:
+				for p in playerStats:
+					if playerStats[p]["inLove"] and p != player:
+						playerStats[p]["alive"] = False
+						killedPlayers.append(p)
 			playerStats[player]["alive"] = False
+			killedPlayers.append(player)
+
+			# kill sleeping slut
+			for p in playerStats:
+				if playerStats[p]["role"] == "slut":
+					if playerStats[p]["sleepsAt"] in killedPlayers:
+						playerStats[p]["alive"] = False
 			return "success"
 		else:
 			return "Error: Player already dead!"
 		
 
 def roleAction(path, request):
-	if gamestate != 1:
+	if not gamestate:
 		return "Error: Game not running!"
 	
 	if "cupid" in path:
@@ -166,6 +204,9 @@ def roleAction(path, request):
 		except KeyError:
 			return "Error: First person not specified!"
 		
+		if person1 == person2:
+			return "Error: You cannot marry the same player"
+
 		# cupid is first round only so no alive-check required
 
 		playerStats[person1]["inLove"] = True
