@@ -161,28 +161,35 @@ def action(path, request):
 			return "success"
 		else:
 			return "Error: Player already dead!"
-			
+
+
 	if "killPlayer" in path:
-		killedPlayers = []
+		return killPlayer(player)
 
-		if playerStats[player]["alive"]:
-			# kill loved ones
-			if playerStats[player]["inLove"]:
-				for p in playerStats:
-					if playerStats[p]["inLove"] and p != player:
-						playerStats[p]["alive"] = False
-						killedPlayers.append(p)
-			playerStats[player]["alive"] = False
-			killedPlayers.append(player)
+def killPlayer(player):
+	killedPlayers = []
 
-			# kill sleeping slut
+	if playerStats[player]["alive"]:
+		# kill loved ones
+		if playerStats[player]["inLove"]:
 			for p in playerStats:
-				if playerStats[p]["role"] == "slut":
-					if playerStats[p]["sleepsAt"] in killedPlayers:
-						playerStats[p]["alive"] = False
-			return "success"
-		else:
-			return "Error: Player already dead!"
+				if playerStats[p]["inLove"] and p != player:
+					#playerStats[p]["alive"] = False
+					killedPlayers.append(p)
+					lastKilledPlayers.append(p)
+		#playerStats[player]["alive"] = False
+		killedPlayers.append(player)
+		lastKilledPlayers.append(player)
+
+		# kill sleeping slut
+		for p in playerStats:
+			if playerStats[p]["role"] == "slut":
+				if playerStats[p]["sleepsAt"] in killedPlayers:
+					#playerStats[p]["alive"] = False
+					lastKilledPlayers.append(p)
+		return "success"
+	else:
+		return "Error: Player already dead!"
 		
 
 def roleAction(path, request):
@@ -190,79 +197,19 @@ def roleAction(path, request):
 		return "Error: Game not running!"
 	
 	if "cupid" in path:
-		try:
-			person1 = request.args["player1"]
-			if person1 not in players:
-				return "Error: First person not in game!"
-		except KeyError:
-			return "Error: First person not specified!"
-		
-		try:
-			person2 = request.args["player2"]
-			if person2 not in players:
-				return "Error: Second person not in game!"
-		except KeyError:
-			return "Error: First person not specified!"
-		
-		if person1 == person2:
-			return "Error: You cannot marry the same player"
-
-		# cupid is first round only so no alive-check required
-
-		playerStats[person1]["inLove"] = True
-		playerStats[person2]["inLove"] = True
-		return "success"
+		return roleActions.cupid(request)
 	
 	if "thief" in path:
-		try:
-			thief = request.args["thief"]
-			if thief not in players:
-				return "Error: Thief not in game!"
-			if not playerStats[thief]["alive"]:
-				return "Error: Thief already dead!"
-			if not playerStats[thief]["role"] == "thief":
-				return "Error: Thief is not a thief!"
-		except KeyError:
-			return "Error: Thief not specified!"
-		try:
-			player = request.args["player"]
-			if player not in players:
-				return "Error: Player not in game!"
-			if not playerStats[player]["alive"]:
-				return "Error: Player already dead!"
-		except KeyError:
-			return "Error: Player not specified!"
-		
-		playerStats[thief]["role"] = playerStats[player]["role"]
-		playerStats[player]["role"] = "thief"
-
-		return "success"
+		return roleActions.thief(request)
 	
 	if "slut" in path:
-		try:
-			fucksWith = request.args["player"]
-			if fucksWith not in players:
-				return "Error: Player not in game!"
-			if not playerStats[fucksWith]["alive"]:
-				return "Error: Player already dead!"
-		except KeyError:
-			return "Error: Player not specified!"
-		
-		try:
-			slut = request.args["slut"]
-			if slut not in players:
-				return "Error: Player not in game!"
-			if not playerStats[slut]["alive"]:
-				return "Error: Player already dead!"
-		except KeyError:
-			return "Error: Player not specified!"
-		
-		playerStats[slut]["sleepsAt"] = fucksWith
-		return "success"
-		
-		
-
-
+		return roleActions.slut(request)
+	
+	if "witch" in path:
+		return roleActions.witch(request)
+	
+	if "wolf_white" in path:
+		return roleActions.wolf_white(request)
 
 
 def settings(path, request):
