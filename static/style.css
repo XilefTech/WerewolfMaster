@@ -12,12 +12,19 @@ body {
 	/*width: 100vh; */
 	margin: 0;
 	padding: 0;
+	background-image: url("./blob.svg");
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-color: #000;
+
 }
+
 
 .container {
 	height: 100%;
 	width: 100%;
-	background-color: #000;
+	/*background-color: #000;*/
+	backdrop-filter: blur(80px);
 	color: #ddd;
 	display: flex;
 	flex-direction: column;
