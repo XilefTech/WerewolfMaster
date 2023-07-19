@@ -7,4 +7,4 @@ playerStats = {}
 gamestate = 0
 gamestates = ["pre-round", "running"]
 lastKilledPlayers = []
-knightKill = False
+knightKill = -1
