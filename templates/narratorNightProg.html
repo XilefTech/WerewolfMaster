@@ -322,11 +322,18 @@
 		}
 
 		function nextFrame() {
+
 			currentFrame++;
+			if(currentFrame >= frameOrder.length) {
+				currentFrame--;
+			}
 			updateFrameViewer();
 		}
 		function prevFrame() {
 			currentFrame--;
+			if(currentFrame < 0) {
+				currentFrame++;
+			}
 			updateFrameViewer();
 		}
 		function updateFrameViewer() {
