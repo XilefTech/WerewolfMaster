@@ -21,11 +21,12 @@ def index_post():
 	if name == "":
 		return render_template("index.html", error="Please enter a name")
 
-	if name in players:
-		return render_template("index.html", error="Name already taken")
-
-	players.append(name)
-	# idk maybe you can inject a js/json payload here, but fuck security
+	if name in players and request.form["forceJoin"].lower() != "true":
+		return render_template("indexRejoin.html", error="Name already taken")
+	
+	if request.form["forceJoin"].lower() != "true":
+		players.append(name)
+	
 	response = make_response(redirect(f"/user"))
 	response.set_cookie("username", name)
 	return response
