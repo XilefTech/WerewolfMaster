@@ -5,7 +5,19 @@ from flask import Flask, make_response, redirect, render_template, request
 from json import dumps, load
 from sites.api import api
 from sites.ui import ui
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
+sentry_sdk.init(
+    dsn="https://ebf0850457914ecfba223658eff985dc@sentry.thegreydiamond.de/13",
+    integrations=[
+        FlaskIntegration(),
+    ],
 
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate=1.0
+)
 from gameData import players, roles, assignedRoles, gamestate, gamestates #, timeout, playerTimeout
 
 app = Flask(__name__)
