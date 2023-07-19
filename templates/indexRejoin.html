@@ -7,20 +7,19 @@
 
 		<form class="item" action="/" method="POST">
 			{% if error %}
-			<p class="row" style="color: red"><strong>{{ error }}</strong></p>
+			Dieser Nutzer ist bereits vergeben. Mit dem gleichen Namen erneut beitreten? (Sinnvoll nach z.B. Verbindungsabbruch)
 			{% endif %}
 			<div class="row">
 				<input type="text" name="name" placeholder="User123" />
-				<input type="hidden" name="forceJoin" value="false" />
-
-				<input type="submit" value="Join" />
+				<input type="hidden" name="forceJoin" value="true" />
+				<input type="submit" value="Erneut beitreiten" />
 			</div>
 		</form>
         
 		<div class="item row" style="height: 45px"></div>
         
-		<form action="/narrator" method="GET">
-            <input class="item row" type="submit" value="Join as Narrator" />
+		<form action="/" method="GET">
+            <input class="item row" type="submit" value="Zurück" />
         </form>
 	</div>
 </body>
