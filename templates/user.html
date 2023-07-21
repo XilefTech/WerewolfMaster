@@ -69,84 +69,64 @@
 				}, 100);
 			}
 		};
-
-		// call api every 0.5 seconds to get the latest player list and update the page
-		setInterval(getPlayers, 500);
-
-		async function getPlayers() {
-			await fetch('/api/players')
-				.then((r) => r.json())
-				.then((data) => (players = data))
-				.catch((e) => console.log('Something went wrong!'));
-
-			// players = JSON.parse(players);
-			console.log(players);
-
-			document.getElementById('playerCount').innerHTML = `Spieler: ${players.length}`;
-			// let list = document.querySelector('ul');
-			// list.innerHTML = '';
-			// if (players.length > 0) {
-			// 	players.forEach((player) => {
-			// 		let li = document.createElement('li');
-			// 		li.innerText = player.charAt(0).toUpperCase() + player.slice(1);
-			// 		list.appendChild(li);
-			// 	});
-			// } else {
-			// 	let li = document.createElement('li');
-			// 	li.innerText = 'No players yet';
-			// 	list.appendChild(li);
-			// }
-		}
 	</script>
 
 	<script>
-		// call api every 0.5 seconds to get the game state and update the page
-		setInterval(getGameState, 500);
+		var socket = io({ transports: ["websocket"] });
 
-		async function getGameState() {
-			await fetch('/api/gamestate')
-				.then((r) => r.json())
-				.then((data) => (gamestate = data))
-				.catch((e) => console.log('Something went wrong!'));
+	    socket.on('connect', function() {
+			console.log('Socket connected');
+	    });
 
-			console.log(gamestate);
-			document.getElementById('gamestate').innerHTML = gamestate;
+		socket.on('gameStatus', function(msg) {
+			console.log('gameStatus', msg);
+			document.getElementById('playerCount').innerHTML = `Spieler: ${msg.playerList.length}`
+			document.getElementById('gamestate').innerHTML = msg.gameState;
 
-			if (gamestate) {
+			if (msg.gameState) {
 				document.getElementById('gamestate').style.color = 'green';
-				myroledata = '';
-				await fetch('/api/me')
-					.then((r) => r.json())
-					.then((data) => (myroledata = data))
-					.catch((e) => console.log('Something went wrong!'));
-				console.log(myroledata);
-
-				if (String(myroledata).includes('Looks like')) {
-					console.log('player not in game');
-					// return;
-				} else {
-					if(myroledata['alive'] == false) {
-						document.getElementById('deathOverlay').style.display = 'block';
-					} else {
-						document.getElementById('deathOverlay').style.display = 'none';
-					}
-					role = myroledata['role'];
-					await fetch(`./static/roles/${role}/info.json`)
-						.then((r) => r.json())
-						.then((data) => (roleData = data));
-					console.log(roleData);
-					document.getElementById('myrole').innerHTML = roleData['de']['roleName'];
-					document.getElementById('roleDescription').innerHTML = roleData['de']['description'];
-					document.getElementById('roleLore').innerHTML = roleData['de']['lore'];
-					document.getElementById('roleImage').src = `./static/roles/${role}/card.png`;
-					document.getElementById('infoIcon').style.visibility = 'visible';
-				}
+				refreshRoleDisplay();
 			} else {
-				document.getElementById('myrole').innerHTML = '';
-				document.getElementById('roleDescription').innerHTML = '';
-				document.getElementById('roleLore').innerHTML = '';
-				document.getElementById('roleImage').src = '';
-				document.getElementById('infoIcon').style.visibility = 'hidden';
+				document.getElementById('gamestate').style.color = 'yellow';
+				clearRoleDisplay();
+			}
+		});
+
+		function clearRoleDisplay() {
+			document.getElementById('myrole').innerHTML = '';
+			document.getElementById('roleDescription').innerHTML = '';
+			document.getElementById('roleLore').innerHTML = '';
+			document.getElementById('roleImage').src = '';
+			document.getElementById('infoIcon').style.visibility = 'hidden';
+		}
+
+		async function refreshRoleDisplay() {
+			myroledata = '';
+			await fetch('/api/me')
+				.then((r) => r.json())
+				.then((data) => (myroledata = data))
+				.catch((e) => console.log('Something went wrong!'));
+			console.log(myroledata);
+
+			if (String(myroledata).includes('Looks like')) {
+				console.log('player not in game');
+				// return;
+			} else if (myroledata) {
+				if (myroledata['alive'] == false) {
+					document.getElementById('deathOverlay').style.display = 'block';
+				} else {
+					document.getElementById('deathOverlay').style.display = 'none';
+				}
+				role = myroledata['role'];
+				await fetch(`./static/roles/${role}/info.json`)
+					.then((r) => r.json())
+					.then((data) => (roleData = data));
+				console.log(roleData);
+				document.getElementById('myrole').innerHTML = roleData['de']['roleName'];
+				document.getElementById('roleDescription').innerHTML = roleData['de']['description'];
+				document.getElementById('roleLore').innerHTML = roleData['de']['lore'];
+				document.getElementById('roleImage').src = `./static/roles/${role}/card.png`;
+				document.getElementById('infoIcon').style.visibility = 'visible';
 			}
 		}
 	</script>
