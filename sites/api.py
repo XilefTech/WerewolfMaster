@@ -5,6 +5,7 @@ from flask import Blueprint, request
 
 import roleActions
 from gameData import gamestate, gamestates, players, assignedRoles, roles, playerStats, lastKilledPlayers, knightKill
+import gameData
 
 
 api = Blueprint('API', __name__, template_folder='templates', static_folder='static')
@@ -25,12 +26,12 @@ def api_path(subpath):
 	
 
 	if subpath == "getNightsDeaths":
-		if not gamestate:
+		if not gameData.gamestate:
 			return dumps({"status": "failed", "data": "Error: Game not running!"})
 
 		missingActions = []
 
-		if knightKill == gamestate - 1:
+		if knightKill == gameData.gamestate - 1:
 			knightKill = False
 			missingActions.append("knight")
 
@@ -38,7 +39,7 @@ def api_path(subpath):
 			if playerStats[p]["role"] in ["hunter"]:
 				missingActions.append(playerStats[p]["role"])
 			if playerStats[p]["role"] in ["knight"]:
-				knightKill = gamestate
+				knightKill = gameData.gamestate
 		
 		
 		if len(missingActions) > 0:
@@ -51,7 +52,7 @@ def api_path(subpath):
 	
 
 	if subpath == "getAlivePlayers":
-		if not gamestate:
+		if not gameData.gamestate:
 			return dumps({"status": "failed", "data": "Error: Game not running!"})
 		
 		alivePlayers = []
@@ -62,7 +63,7 @@ def api_path(subpath):
 	
 
 	if subpath == "getPlayersByRole":
-		if not gamestate:
+		if not gameData.gamestate:
 			return dumps({"status": "failed", "data": "Error: Game not running!"})
 		
 		try:
@@ -80,7 +81,7 @@ def api_path(subpath):
 		return dumps({"status": "success", "data": sorted(playersByRole)})
 	
 	if subpath == "getWitchPotions":
-		if not gamestate:
+		if not gameData.gamestate:
 			return dumps({"status": "failed", "data": "Error: Game not running!"})
 		
 		try:
@@ -98,7 +99,7 @@ def api_path(subpath):
 
 
 	if subpath == "gamestate":
-		return dumps(gamestate)
+		return dumps(gameData.gamestate)
 	
 
 	if subpath == "me":
@@ -106,7 +107,7 @@ def api_path(subpath):
 		if not name:
 			return "Error: No username cookie found!"
 		
-		if not gamestate:
+		if not gameData.gamestate:
 			return "Error: Game not running!"
 
 		if name in playerStats:
@@ -116,19 +117,19 @@ def api_path(subpath):
 
 
 	if subpath == "endround":
-		gamestate += 1
+		gameData.gamestate += 1
 		lastKilledPlayers = []
 		return dumps("success")
 
 
 	if subpath == "endgame":
-		gamestate = 0
+		gameData.gamestate = 0
 		playerStats.clear()
 		return dumps("success")
 
 
 	if subpath == "startgame":
-		if gamestate:
+		if gameData.gamestate:
 			return dumps({"status": "failed", "data": "Error: Game already running!"})
 		
 		gameRoles = []
@@ -144,13 +145,13 @@ def api_path(subpath):
 		for index, player in enumerate(players):
 			playerStats[player] = {"role": gameRoles[index], "alive": True, "inLove": False, "potions": ["heal", "kill"]}
 
-		gamestate = 1
+		gameData.gamestate = 1
 
 		return dumps({"status": "success", "data": playerStats})
 	
 
 	if subpath == "getGameData":
-		if gamestate:
+		if gameData.gamestate:
 			return dumps({"status": "success", "data": playerStats})
 		else:
 			return dumps({"status": "failed", "data": "Error: Game not running!"})
@@ -259,7 +260,7 @@ def killPlayer(player):
 		
 
 def roleAction(path, request):
-	if not gamestate:
+	if not gameData.gamestate:
 		return "Error: Game not running!"
 	
 	if "cupid" in path:
