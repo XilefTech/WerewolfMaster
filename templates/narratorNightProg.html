@@ -359,6 +359,7 @@
 			if(currentFrame >= frameOrder.length) {
 				currentFrame--;
 			}
+			updateWitchPotions();
 			updateFrameViewer();
 		}
 		function prevFrame() {
@@ -564,7 +565,7 @@
 				}
 			}
 		}
-		setInterval(updateWitchPotions, 500);
+		// setInterval(updateWitchPotions, 500);
 		updateWitchPotions();
 
 		function newRound() {
