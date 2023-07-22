@@ -15,7 +15,7 @@
 - getRoleEntries
 - action/
 - - hangPlayer?player=string
-- - killPlayer?player=string
+- - killPlayer?player=string&daykill=true
 - - role/
 - - - cupid?player1=string&player2=string
 - - - thief?player=string&thief=string
