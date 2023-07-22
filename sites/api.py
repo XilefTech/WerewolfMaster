@@ -230,9 +230,9 @@ def action(path, request):
 
 
 	if "killPlayer" in path:
-		return killPlayer(player)
+		return killPlayer(player, request)
 
-def killPlayer(player):
+def killPlayer(player, request):
 	killedPlayers = []
 
 	if playerStats[player]["alive"]:
@@ -248,11 +248,12 @@ def killPlayer(player):
 		lastKilledPlayers.append(player)
 
 		# kill sleeping slut
-		for p in playerStats:
-			if playerStats[p]["role"] == "slut":
-				if playerStats[p]["sleepsAt"] in killedPlayers:
-					#playerStats[p]["alive"] = False
-					lastKilledPlayers.append(p)
+		if "daykill" in request.args.keys():
+			for p in playerStats:
+				if playerStats[p]["role"] == "slut":
+					if playerStats[p]["sleepsAt"] in killedPlayers:
+						#playerStats[p]["alive"] = False
+						lastKilledPlayers.append(p)
 		return "success"
 	else:
 		return "Error: Player already dead!"
