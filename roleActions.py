@@ -1,3 +1,4 @@
+import gameData
 from gameData import playerStats, lastKilledPlayers, gamestate
 
 def cupid(request):
@@ -88,6 +89,7 @@ def witch(request):
 	if action == "heal":
 		lastKilledPlayers.clear()
 		playerStats[witch]["potions"].remove("heal")
+		return "success"
 	
 	if action == "kill":
 		playerStats[witch]["potions"].remove("kill")
@@ -120,24 +122,25 @@ def wolf_white(request):
 def killPlayer(player):
 	killedPlayers = []
 
-	if playerStats[player]["alive"]:
+	if gameData.playerStats[player]["alive"]:
 		# kill loved ones
-		if playerStats[player]["inLove"]:
-			for p in playerStats:
-				if playerStats[p]["inLove"] and p != player:
+		if gameData.playerStats[player]["inLove"]:
+			for p in gameData.playerStats:
+				if gameData.playerStats[p]["inLove"] and p != player:
 					#playerStats[p]["alive"] = False
 					killedPlayers.append(p)
-					lastKilledPlayers.append(p)
+					gameData.lastKilledPlayers.append(p)
 		#playerStats[player]["alive"] = False
 		killedPlayers.append(player)
-		lastKilledPlayers.append(player)
+		gameData.lastKilledPlayers.append(player)
 
 		# kill sleeping slut
-		for p in playerStats:
-			if playerStats[p]["role"] == "slut":
-				if playerStats[p]["sleepsAt"] in killedPlayers:
+		for p in gameData.playerStats:
+			if gameData.playerStats[p]["role"] == "slut":
+				if gameData.playerStats[p]["sleepsAt"] in killedPlayers:
 					#playerStats[p]["alive"] = False
-					lastKilledPlayers.append(p)
+					gameData.lastKilledPlayers.append(p)
+		print(killedPlayers)
 		return "success"
 	else:
 		return "Error: Player already dead!"
