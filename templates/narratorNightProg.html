@@ -19,7 +19,7 @@
 			</div>
 		</div>
 		<h1>Story time</h1>
-		<iframe name="formresponse" width="200" height="50" style="background-color: rgba(100, 100, 100, 0.4); border-color: #fff6; border-radius: 5px"></iframe>
+		<iframe onload="clearIframe()" name="formresponse" id="formrespo" width="200" height="50" style="background-color: rgba(100, 100, 100, 0.4); border-color: #fff6; border-radius: 5px"></iframe>
 		<br />
 		<button onclick="nextFrame()">Next</button>
 		<button onclick="prevFrame()">Prev</button>
@@ -182,6 +182,20 @@
 			<div class="explainer" id="explain_bearleader">Infotext wird geladen...</div>
 			<strong>Diese Rolle unterstützt aktuell keine Aktionen.</strong>
 		</div>
+		<div id="frame_daykill">
+			<h2>Daykill</h2>
+			<div class="" id="">Daykill auswählen</div>
+			<form action="/api/action/killPlayer&daykill=true" target="formresponse">
+				<!-- User select -->
+				<label for="cars">Ziel:</label>
+				<select name="player" id="fill_player_10" class="playerLoader"></select>
+				<button type="submit">Absenden</button>
+			</form>
+			<form action="/api/action/getNightDeaths" target="formresponse">
+				
+				<button type="submit">Hier nochmal klicken</button>
+			</form>
+		</div>
 		<div id="frame_end_round">
 			<h2>Runden Ende</h2>
 			<strong>Das Runden Ende wurde erreicht.</strong>
@@ -285,6 +299,7 @@
 			'frame_hunter',
 			'frame_maiden',
 			'frame_bearleader',
+			'frame_daykill',
 			'frame_end_round'
 		];
 		const firstRoundFrames = ['frame_cupid', 'frame_wild_kiddo'];
@@ -311,6 +326,20 @@
 			}).responseText;
 			getGameData();
 		}, 1000);
+
+		// Clear the result iframe 2 seconds after last src change
+		function clearIframe() {
+			setTimeout(() => {
+				iframe = document.getElementById("formrespo")
+				var html = "";
+
+iframe.contentWindow.document.open();
+iframe.contentWindow.document.write(html);
+iframe.contentWindow.document.close();
+				//$("#formrespo").src = "about:blank"
+			}, 2000)
+			
+		}
 
 		var nightProgressionPercent = 0;
 		var currentFrame = 0;
