@@ -34,7 +34,7 @@ def api_path(subpath):
 			knightKill = False
 			missingActions.append("knight")
 
-		for p in lastKilledPlayers:
+		for p in gameData.lastKilledPlayers:
 			if playerStats[p]["role"] in ["hunter"]:
 				missingActions.append(playerStats[p]["role"])
 			if playerStats[p]["role"] in ["knight"]:
@@ -44,10 +44,10 @@ def api_path(subpath):
 		if len(missingActions) > 0:
 			return dumps({"status": "missing", "data": missingActions})
 
-		for p in lastKilledPlayers:
+		for p in gameData.lastKilledPlayers:
 			playerStats[p]["alive"] = False
 
-		return dumps({"status": "success", "data": lastKilledPlayers})
+		return dumps({"status": "success", "data": gameData.lastKilledPlayers})
 	
 
 	if subpath == "getAlivePlayers":
@@ -148,7 +148,7 @@ def api_path(subpath):
 
 		gameData.gamestate = 1
 
-		socketio.emit('gameStatus', {"status": "ok", "playerList": gameData.players, "gameState": gameData.gamestate}, broadcast=True)
+		socketio.emit('gameStatus', {"status": "ok", "playerList": gameData.players, "gameState": gameData.gamestate})
 		return dumps({"status": "success", "data": playerStats})
 	
 
@@ -248,7 +248,7 @@ def killPlayer(player, request):
 					lastKilledPlayers.append(p)
 		#playerStats[player]["alive"] = False
 		killedPlayers.append(player)
-		lastKilledPlayers.append(player)
+		gameData.lastKilledPlayers.append(player)
 
 		# kill sleeping slut
 		if "daykill" not in request.args.keys():
@@ -256,7 +256,7 @@ def killPlayer(player, request):
 				if playerStats[p]["role"] == "slut":
 					if playerStats[p]["sleepsAt"] in killedPlayers:
 						#playerStats[p]["alive"] = False
-						lastKilledPlayers.append(p)
+						gameData.lastKilledPlayers.append(p)
 		return "success"
 	else:
 		return "Error: Player already dead!"
