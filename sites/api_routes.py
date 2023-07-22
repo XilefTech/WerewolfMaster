@@ -251,7 +251,7 @@ def killPlayer(player, request):
 		lastKilledPlayers.append(player)
 
 		# kill sleeping slut
-		if "daykill" in request.args.keys():
+		if "daykill" not in request.args.keys():
 			for p in playerStats:
 				if playerStats[p]["role"] == "slut":
 					if playerStats[p]["sleepsAt"] in killedPlayers:
