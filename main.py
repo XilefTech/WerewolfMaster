@@ -4,8 +4,6 @@ from json import dumps, load
 from flask import Flask, make_response, redirect, render_template, request
 from flask_socketio import SocketIO, send, emit
 
-from sites.api import api
-from sites.ui import ui
 
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
@@ -26,9 +24,13 @@ import gameData
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config['SECRET_KEY'] = 'secret!'
+socketio = SocketIO(app, async_mode="threading")
+
+from sites import api
+from sites import ui
+
 app.register_blueprint(api)
 app.register_blueprint(ui)
-socketio = SocketIO(app, async_mode="threading")
 
 
 def getAvailableRoles():
@@ -43,6 +45,7 @@ def connect(auth):
 @socketio.on('disconnect')
 def disconnect():
 	print('Client disconnected')
+	time.sleep(0.2) # wait for playerlist to update
 	emit('gameStatus', {"status": "ok", "playerList": gameData.players, "gameState": gameData.gamestate}, broadcast=True)
 
 def background_task_gamestate():
