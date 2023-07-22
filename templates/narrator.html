@@ -19,8 +19,8 @@
 		<div class="item row" style="height: 45px"></div>
 
 		<div class="item row">
-			<h2>Spieler:</h2>
-			<ul></ul>
+			<h2 id="playerCount">Spieler:</h2>
+			<ul id="playerList"></ul>
 		</div>
 
 		<div class="item">
@@ -31,7 +31,15 @@
 		<div class="item row" style="height: 20px"></div>
 		<p class="row" id="roleError" style="color: red"></p>
 		<button class="item row" id="start-button">Start Game</button>
+		<div class="item row" style="height: 20px"></div>
+		<button class="item row" id="night-button" onclick="window.location.href='/narrator/story'">Rundenmenü</button>
+		<div class="item row" style="height: 20px"></div>
 		<button class="item row" id="end-button">End Game</button>
+	</div>
+	
+	<div class="item row bottom">
+		<h2 class="item debug">Game State:</h2>
+		<p class="item debug" id="gamestate"></p>
 	</div>
 </body>
 
@@ -151,31 +159,29 @@
 </script>
 
 <script>
-	// call api every 0.5 seconds to get the latest player list and update the page
-	setInterval(getPlayers, 500);
+	var socket = io({ transports: ["websocket"] });
 
-	// maybe this can be put in a separate file? used in user.html as well
-	async function getPlayers() {
-		await fetch('/api/players')
-			.then((r) => r.json())
-			.then((data) => (players = data))
-			.catch((e) => console.log('Something went wrong!'));
+	socket.on('connect', function() {
+		console.log('Socket connected');
+	});
 
-		console.log(players);
-		let list = document.querySelector('ul');
+	socket.on('gameStatus', function(msg) {
+		console.log('gameStatus', msg);
+		document.getElementById('gamestate').innerHTML = msg.gameState;
+		document.getElementById('playerCount').innerHTML = `Spieler: ${msg.playerList.length}`
+
+		let list = document.getElementById('playerList');
 		list.innerHTML = '';
-		if (players.length > 0) {
-			players.forEach((player) => {
-				let li = document.createElement('li');
-				li.innerText = player.charAt(0).toUpperCase() + player.slice(1);
-				list.appendChild(li);
-			});
-			document.querySelector('h2').innerHTML = 'Spieler: ' + players.length;
-		} else {
+		msg.playerList .forEach((player) => {
 			let li = document.createElement('li');
-			li.innerText = 'No players yet';
+			li.innerText = player.charAt(0).toUpperCase() + player.slice(1);
 			list.appendChild(li);
-			document.querySelector('h2').innerHTML = 'Spieler: 0';
+		});
+
+		if (msg.gameState) {
+			document.getElementById('gamestate').style.color = 'green';
+		} else {
+			document.getElementById('gamestate').style.color = 'yellow';
 		}
-	}
+	});
 </script>

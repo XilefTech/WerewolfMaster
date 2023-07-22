@@ -1,10 +1,10 @@
-from html import escape
 import os
-import random
-from flask import Flask, make_response, redirect, render_template, request
+import time
 from json import dumps, load
-from sites.api import api
-from sites.ui import ui
+from flask import Flask, make_response, redirect, render_template, request
+from flask_socketio import SocketIO, send, emit
+
+
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 sentry_sdk.init(
@@ -18,10 +18,17 @@ sentry_sdk.init(
     # We recommend adjusting this value in production.
     traces_sample_rate=1.0
 )
-from gameData import players, roles, assignedRoles, gamestate, gamestates #, timeout, playerTimeout
+
+import gameData
 
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config['SECRET_KEY'] = 'secret!'
+socketio = SocketIO(app, async_mode="threading")
+
+from sites import api
+from sites import ui
+
 app.register_blueprint(api)
 app.register_blueprint(ui)
 
@@ -30,14 +37,35 @@ def getAvailableRoles():
 	if "static\\roles" not in os.getcwd(): os.chdir("static/roles/")
 	return os.listdir()
 
+@socketio.on('connect')
+def connect(auth):
+	print('New client connected!')
+	emit('gameStatus', {"status": "ok", "playerList": gameData.players, "gameState": gameData.gamestate}, broadcast=True)
 
-for role in getAvailableRoles():
-	if role not in roles:
-		roles[role] = 0
+@socketio.on('disconnect')
+def disconnect():
+	print('Client disconnected')
+	time.sleep(0.2) # wait for playerlist to update
+	emit('gameStatus', {"status": "ok", "playerList": gameData.players, "gameState": gameData.gamestate}, broadcast=True)
 
-print(roles)
+def background_task_gamestate():
+	while(True):
+		socketio.emit('gameStatus', {"status": "ok", "playerList": gameData.players, "gameState": gameData.gamestate})
+		time.sleep(20)
 
 # import logging
 # log = logging.getLogger('werkzeug')
 # log.setLevel(logging.ERROR)
-app.run(host='0.0.0.0', port=3000)
+if __name__ == '__main__':
+	print('starting...')
+
+	for role in getAvailableRoles():
+		if role not in gameData.roles:
+			gameData.roles[role] = 0
+	print(gameData.roles)
+
+	socketio.start_background_task(background_task_gamestate)
+	socketio.run(app, host='0.0.0.0', port=3000)
+	# app.run(host='0.0.0.0', port=3000)
+
+

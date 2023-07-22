@@ -1,9 +1,12 @@
 from html import escape
 from flask import Blueprint, make_response, redirect, render_template, request
+import time
 
-from gameData import players
+import gameData
 
-ui = Blueprint('UI', __name__, template_folder='templates', static_folder='static')
+from . import ui
+from main import socketio
+# ui = Blueprint('UI', __name__, template_folder='templates', static_folder='static')
 
 @ui.get("/")
 def index_get():
@@ -21,11 +24,11 @@ def index_post():
 	if name == "":
 		return render_template("index.html", error="Please enter a name")
 
-	if name in players and request.form["forceJoin"].lower() != "true":
+	if name in gameData.players and request.form["forceJoin"].lower() != "true":
 		return render_template("indexRejoin.html", error="Name already taken")
 	
 	if request.form["forceJoin"].lower() != "true":
-		players.append(name)
+		gameData.players.append(name)
 	
 	response = make_response(redirect(f"/user"))
 	response.set_cookie("username", name)
@@ -36,8 +39,8 @@ def index_post():
 def userpage():
 	username = request.cookies.get("username")
 	if username:
-		if username not in players:
-			players.append(username)
+		if username not in gameData.players:
+			gameData.players.append(username)
 		return render_template("user.html", username=escape(username.capitalize()))
 	else:
 		return redirect("/")
@@ -46,7 +49,7 @@ def userpage():
 @ui.route("/logout")
 def logout():
 	name = request.cookies.get("username")
-	players.remove(name) if name in players else None
+	gameData.players.remove(name) if name in gameData.players else None
 
 	response = make_response(redirect("/"))
 	response.set_cookie("username", "", expires=0)
