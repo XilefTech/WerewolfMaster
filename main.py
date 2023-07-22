@@ -51,7 +51,7 @@ def disconnect():
 def background_task_gamestate():
 	while(True):
 		socketio.emit('gameStatus', {"status": "ok", "playerList": gameData.players, "gameState": gameData.gamestate})
-		time.sleep(20)
+		time.sleep(2) # -> increase to 20 or smth when api changes can also send status updates
 
 # import logging
 # log = logging.getLogger('werkzeug')
