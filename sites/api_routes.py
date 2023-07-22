@@ -2,13 +2,15 @@ from json import dumps, load
 import os
 import random
 from flask import Blueprint, request
-
+from flask_socketio import SocketIO, emit
 import roleActions
+
 from gameData import gamestate, gamestates, players, assignedRoles, roles, playerStats, lastKilledPlayers, knightKill
 import gameData
 
-
-api = Blueprint('API', __name__, template_folder='templates', static_folder='static')
+from . import api
+from main import socketio
+# api = Blueprint('API', __name__, template_folder='templates', static_folder='static')
 
 @api.route("/api")
 def api_mainpage():
@@ -17,9 +19,6 @@ def api_mainpage():
 @api.route("/api/<path:subpath>")
 def api_path(subpath):
 	global gamestate, assignedRoles, playerStats, players, lastKilledPlayers, knightKill
-	# if a playertimeout is needed, uncomment this, resets the timeout value with every api request
-	# if request.cookies.get("username"):
-	#     playerTimeout[request.cookies.get("username")] = timeout
 
 	if subpath == "players":
 		return dumps(sorted(players))
@@ -119,12 +118,14 @@ def api_path(subpath):
 	if subpath == "endround":
 		gameData.gamestate += 1
 		lastKilledPlayers = []
+		socketio.emit('gameStatus', {"status": "ok", "playerList": gameData.players, "gameState": gameData.gamestate})
 		return dumps("success")
 
 
 	if subpath == "endgame":
 		gameData.gamestate = 0
 		playerStats.clear()
+		socketio.emit('gameStatus', {"status": "ok", "playerList": gameData.players, "gameState": gameData.gamestate})
 		return dumps("success")
 
 
@@ -147,6 +148,7 @@ def api_path(subpath):
 
 		gameData.gamestate = 1
 
+		socketio.emit('gameStatus', {"status": "ok", "playerList": gameData.players, "gameState": gameData.gamestate}, broadcast=True)
 		return dumps({"status": "success", "data": playerStats})
 	
 
