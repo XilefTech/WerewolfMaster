@@ -331,18 +331,18 @@
 		}, 1000);
 
 		// Clear the result iframe 2 seconds after last src change
-		function clearIframe() {
-			setTimeout(() => {
-				iframe = document.getElementById("formrespo")
-				var html = "";
+		// function clearIframe() {
+		// 	setTimeout(() => {
+		// 		iframe = document.getElementById("formrespo")
+		// 		var html = "";
 
-				iframe.contentWindow.document.open();
-				iframe.contentWindow.document.write(html);
-				iframe.contentWindow.document.close();
-				//$("#formrespo").src = "about:blank"
-			}, 3000)
+		// 		iframe.contentWindow.document.open();
+		// 		iframe.contentWindow.document.write(html);
+		// 		iframe.contentWindow.document.close();
+		// 		//$("#formrespo").src = "about:blank"
+		// 	}, 3000)
 			
-		}
+		// }
 
 		var nightProgressionPercent = 0;
 		var currentFrame = 0;
@@ -360,6 +360,14 @@
 				currentFrame--;
 			}
 			updateWitchPotions();
+			// clear iframe
+			iframe = document.getElementById("formrespo")
+			var html = "";
+
+			iframe.contentWindow.document.open();
+			iframe.contentWindow.document.write(html);
+			iframe.contentWindow.document.close();
+
 			updateFrameViewer();
 		}
 		function prevFrame() {
