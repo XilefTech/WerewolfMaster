@@ -29,8 +29,8 @@ socketio = SocketIO(app, async_mode="threading")
 from sites import api
 from sites import ui
 
-app.register_blueprint(api)
-app.register_blueprint(ui)
+# app.register_blueprint(api)
+# app.register_blueprint(ui)
 
 
 def getAvailableRoles():
@@ -58,6 +58,9 @@ def background_task_gamestate():
 # log.setLevel(logging.ERROR)
 if __name__ == '__main__':
 	print('starting...')
+	
+	app.register_blueprint(api)
+	app.register_blueprint(ui)
 
 	for role in getAvailableRoles():
 		if role not in gameData.roles:
