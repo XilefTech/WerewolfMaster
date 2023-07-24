@@ -46,6 +46,7 @@ def api_path(subpath):
 
 		for p in gameData.lastKilledPlayers:
 			playerStats[p]["alive"] = False
+			gameData.lastKilledPlayers.remove(p)
 
 		return dumps({"status": "success", "data": gameData.lastKilledPlayers})
 	
