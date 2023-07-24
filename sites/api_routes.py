@@ -44,8 +44,12 @@ def api_path(subpath):
 		if len(missingActions) > 0:
 			return dumps({"status": "missing", "data": missingActions})
 
+		killedPlayers = []
 		for p in gameData.lastKilledPlayers:
 			playerStats[p]["alive"] = False
+			killedPlayers.append(p)
+		
+		gameData.lastKilledPlayers.clear()
 
 		return dumps({"status": "success", "data": gameData.lastKilledPlayers})
 	
@@ -238,23 +242,27 @@ def action(path, request):
 def killPlayer(player, request):
 	killedPlayers = []
 
-	if playerStats[player]["alive"]:
+	if gameData.playerStats[player]["alive"]:
+		# spare slut if sleeping at someone else's
+		if gameData.playerStats[player]["role"] == "slut":
+			return "success"
+
 		# kill loved ones
-		if playerStats[player]["inLove"]:
+		if gameData.playerStats[player]["inLove"]:
 			for p in playerStats:
-				if playerStats[p]["inLove"] and p != player:
+				if gameData.playerStats[p]["inLove"] and p != player:
 					#playerStats[p]["alive"] = False
 					killedPlayers.append(p)
-					lastKilledPlayers.append(p)
+					gameData.lastKilledPlayers.append(p)
 		#playerStats[player]["alive"] = False
 		killedPlayers.append(player)
 		gameData.lastKilledPlayers.append(player)
 
 		# kill sleeping slut
 		if "daykill" not in request.args.keys():
-			for p in playerStats:
-				if playerStats[p]["role"] == "slut":
-					if playerStats[p]["sleepsAt"] in killedPlayers:
+			for p in gameData.playerStats:
+				if gameData.playerStats[p]["role"] == "slut":
+					if gameData.playerStats[p]["sleepsAt"] in killedPlayers:
 						#playerStats[p]["alive"] = False
 						gameData.lastKilledPlayers.append(p)
 		return "success"
