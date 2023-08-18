@@ -138,6 +138,13 @@ def killPlayer(player):
 		for p in gameData.playerStats:
 			if gameData.playerStats[p]["role"] == "slut":
 				if gameData.playerStats[p]["sleepsAt"] in killedPlayers:
+					# kill loved ones
+					if gameData.playerStats[p]["inLove"]:
+						for pl in playerStats:
+							if gameData.playerStats[pl]["inLove"] and p != player:
+								#playerStats[p]["alive"] = False
+								killedPlayers.append(pl)
+								gameData.lastKilledPlayers.append(pl)
 					#playerStats[p]["alive"] = False
 					gameData.lastKilledPlayers.append(p)
 		print(killedPlayers)
